@@ -29,7 +29,21 @@ class CategoryEntity(
 
     @Column(nullable = false)
     val color: String,
+
 ) : BaseEntity() {
+
+    companion object {
+        fun from(category: Category): CategoryEntity {
+            return CategoryEntity(
+                category.id,
+                category.userId,
+                category.name,
+                category.icon,
+                category.color,
+            )
+        }
+    }
+
     fun toDomain(): Category = Category(
         id = this.id,
         userId = this.userId,

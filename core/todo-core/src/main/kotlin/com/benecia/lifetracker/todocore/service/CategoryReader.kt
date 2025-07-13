@@ -29,4 +29,17 @@ data class CategoryReader(
             color = category.color,
         )
     }
+
+    fun findAllByUserId(userId: UUID): List<CategoryInfo> {
+        val categories = categoryRepository.findAllByUserId(userId)
+
+        return categories.map { category ->
+            CategoryInfo(
+                id = category.id!!,
+                name = category.name,
+                icon = category.icon,
+                color = category.color,
+            )
+        }
+    }
 }

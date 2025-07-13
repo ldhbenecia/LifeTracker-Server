@@ -7,4 +7,6 @@ import java.util.UUID
 interface CategoryRepository {
     fun findByUserIdAndId(userId: UUID, id: Long): Category
     fun findByUserIdAndName(userId: UUID, name: String): Category
+    fun findAllByUserId(userId: UUID): List<Category>
+    fun add(category: Category): Long
 }

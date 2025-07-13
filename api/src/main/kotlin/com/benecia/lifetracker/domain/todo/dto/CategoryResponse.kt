@@ -9,13 +9,11 @@ data class CategoryResponse(
     val color: String,
 ) {
     companion object {
-        fun from(info: CategoryInfo): CategoryResponse {
-            return CategoryResponse(
-                id = info.id,
-                name = info.name,
-                icon = info.icon,
-                color = info.color,
-            )
-        }
+        fun of(info: CategoryInfo): CategoryResponse = CategoryResponse(
+            id = info.id,
+            name = info.name,
+            icon = info.icon,
+            color = info.color,
+        )
     }
 }

@@ -23,4 +23,14 @@ class CategoryEntityRepository(
             ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
         return entity.toDomain()
     }
+
+    override fun findAllByUserId(userId: UUID): List<Category> {
+        val entities = categoryJpaRepository.findAllByUserId(userId)
+        return entities.map { it.toDomain() }
+    }
+
+    override fun add(category: Category): Long {
+        val entity = CategoryEntity.from(category)
+        return categoryJpaRepository.save(entity).id!!
+    }
 }

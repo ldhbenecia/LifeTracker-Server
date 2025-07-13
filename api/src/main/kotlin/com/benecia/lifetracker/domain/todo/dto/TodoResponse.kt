@@ -18,7 +18,7 @@ data class TodoResponse(
         fun of(info: TodoInfo): TodoResponse = TodoResponse(
             id = info.id,
             title = info.title,
-            category = CategoryResponse.from(info.category),
+            category = CategoryResponse.of(info.category),
             scheduledDate = info.scheduledDate,
             notificationTime = info.notificationTime,
             isDone = info.isDone,
