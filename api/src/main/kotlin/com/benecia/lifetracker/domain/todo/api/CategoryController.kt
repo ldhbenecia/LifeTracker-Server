@@ -2,6 +2,7 @@ package com.benecia.lifetracker.domain.todo.api
 
 import com.benecia.lifetracker.common.response.ApiResponse
 import com.benecia.lifetracker.domain.todo.dto.AddCategoryRequest
+import com.benecia.lifetracker.domain.todo.dto.AddCategoryResponse
 import com.benecia.lifetracker.domain.todo.dto.CategoryResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.todocore.service.CategoryService
@@ -50,7 +51,8 @@ class CategoryController(
     fun addCategory(
         @AuthenticationPrincipal loginUser: LoginUser,
         @RequestBody command: AddCategoryRequest,
-    ): Long {
-        return categoryService.add(loginUser.id, command.toAddCategory())
+    ): ApiResponse<AddCategoryResponse> {
+        val category = categoryService.add(loginUser.id, command.toAddCategory())
+        return ApiResponse.success(AddCategoryResponse(category))
     }
 }
