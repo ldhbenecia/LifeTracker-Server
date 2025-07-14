@@ -19,6 +19,19 @@ data class CategoryReader(
         )
     }
 
+    fun findByUserIdAndIds(userId: UUID, ids: List<Long>): List<CategoryInfo> {
+        val categories = categoryRepository.findByUserIdAndIds(userId, ids)
+
+        return categories.map { category ->
+            CategoryInfo(
+                id = category.id!!,
+                name = category.name,
+                icon = category.icon,
+                color = category.color,
+            )
+        }
+    }
+
     fun findByUserIdAndName(userId: UUID, name: String): CategoryInfo {
         val category = categoryRepository.findByUserIdAndName(userId, name)
 

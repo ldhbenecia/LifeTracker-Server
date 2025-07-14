@@ -18,6 +18,10 @@ class CategoryService(
         return categoryReader.findByUserIdAndName(userId, name)
     }
 
+    fun findByIds(userId: UUID, ids: List<Long>): List<CategoryInfo> {
+        return categoryReader.findByUserIdAndIds(userId, ids)
+    }
+
     fun findAllByUserId(userId: UUID): List<CategoryInfo> {
         return categoryReader.findAllByUserId(userId)
     }

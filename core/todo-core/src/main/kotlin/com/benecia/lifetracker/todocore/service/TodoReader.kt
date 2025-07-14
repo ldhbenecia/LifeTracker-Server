@@ -35,11 +35,15 @@ data class TodoReader(
         val end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59)
 
         val todos = todoRepository.findByUserIdAndScheduledDateRange(userId, start, end, page, size)
+        val categoryIds = todos.map { it.categoryId }.distinct()
+        val categories = categoryReader.findByUserIdAndIds(userId, categoryIds)
+        val categoryMap = categories.associateBy { it.id }
+
         return todos.map { todo ->
             TodoInfo(
                 id = todo.id!!,
                 title = todo.title,
-                category = categoryReader.findByUserIdAndId(userId, todo.categoryId),
+                category = categoryMap[todo.categoryId]!!,
                 scheduledDate = todo.scheduledDate,
                 notificationTime = todo.notificationTime,
                 isDone = todo.isDone,

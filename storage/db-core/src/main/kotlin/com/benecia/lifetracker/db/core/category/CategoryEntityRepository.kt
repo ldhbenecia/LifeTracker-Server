@@ -18,6 +18,11 @@ class CategoryEntityRepository(
         return entity.toDomain()
     }
 
+    override fun findByUserIdAndIds(userId: UUID, ids: List<Long>): List<Category> {
+        if (ids.isEmpty()) return emptyList()
+        return categoryJpaRepository.findByUserIdAndIdIn(userId, ids).map { it.toDomain() }
+    }
+
     override fun findByUserIdAndName(userId: UUID, name: String): Category {
         val entity = categoryJpaRepository.findByUserIdAndName(userId, name)
             ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
