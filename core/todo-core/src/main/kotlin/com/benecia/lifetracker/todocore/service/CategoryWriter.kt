@@ -1,5 +1,7 @@
 package com.benecia.lifetracker.todocore.service
 
+import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.model.command.AddCategory
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -10,6 +12,11 @@ data class CategoryWriter(
     private val categoryRepository: CategoryRepository,
 ) {
     fun add(userId: UUID, command: AddCategory): Long {
+        val exists = categoryReader.findByUserIdAndName(userId, command.name)
+        if (exists != null) {
+            throw CoreException(CategoryErrorCode.DUPLICATE_CATEGORY_NAME)
+        }
+
         val category = Category(
             userId = userId,
             name = command.name,
