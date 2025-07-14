@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -29,6 +30,19 @@ class TodoController(
     ): ApiResponse<TodoResponse> {
         val todoInfo = todoService.findTodoById(loginUser.id, id)
         return ApiResponse.success(TodoResponse.of(todoInfo))
+    }
+
+    @GetMapping("/month")
+    fun findTodosByMonth(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @RequestParam year: Int,
+        @RequestParam month: Int,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+    ): ApiResponse<List<TodoResponse>> {
+        val todos = todoService.findTodosByMonth(loginUser.id, year, month, page, size)
+        val responseList = todos.map { TodoResponse.of(it) }
+        return ApiResponse.success(responseList)
     }
 
     @PostMapping
