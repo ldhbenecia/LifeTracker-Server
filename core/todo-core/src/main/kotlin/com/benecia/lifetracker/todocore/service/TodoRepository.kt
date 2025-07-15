@@ -11,8 +11,6 @@ interface TodoRepository {
         userId: UUID,
         start: LocalDateTime,
         end: LocalDateTime,
-        page: Int,
-        size: Int,
     ): List<Todo>
     fun add(todo: Todo): Long
     fun modify(id: Long, todo: Todo): Long
