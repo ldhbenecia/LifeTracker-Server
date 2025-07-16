@@ -37,10 +37,8 @@ class TodoController(
         @AuthenticationPrincipal loginUser: LoginUser,
         @RequestParam year: Int,
         @RequestParam month: Int,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
     ): ApiResponse<List<TodoResponse>> {
-        val todos = todoService.findTodosByMonth(loginUser.id, year, month, page, size)
+        val todos = todoService.findTodosByMonth(loginUser.id, year, month)
         val responseList = todos.map { TodoResponse.of(it) }
         return ApiResponse.success(responseList)
     }

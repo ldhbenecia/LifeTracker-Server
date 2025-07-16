@@ -19,10 +19,8 @@ class TodoService(
         userId: UUID,
         year: Int,
         month: Int,
-        page: Int,
-        size: Int,
     ): List<TodoInfo> {
-        return todoReader.findTodosByMonth(userId, year, month, page, size)
+        return todoReader.findTodosByMonth(userId, year, month)
     }
 
     fun addTodo(userId: UUID, command: NewTodo): Long {
