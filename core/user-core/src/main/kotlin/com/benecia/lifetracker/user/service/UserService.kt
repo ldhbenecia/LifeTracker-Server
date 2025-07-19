@@ -1,5 +1,6 @@
 package com.benecia.lifetracker.user.service
 
+import com.benecia.lifetracker.user.model.info.UserInfo
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -13,15 +14,15 @@ class UserService(
         return user.copy(id = userId)
     }
 
-    fun findById(id: UUID): User? {
+    fun update(user: User): User {
+        return userWriter.update(user)
+    }
+
+    fun findById(id: UUID): UserInfo {
         return userReader.findById(id)
     }
 
-    fun findByProviderAndEmail(provider: String, email: String): User? {
+    fun findByProviderAndEmail(provider: String, email: String): UserInfo {
         return userReader.findByProviderAndEmail(provider, email)
-    }
-
-    fun update(user: User): User {
-        return userWriter.update(user)
     }
 }
