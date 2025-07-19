@@ -15,7 +15,7 @@ import java.util.UUID
 class UserController(
     private val userService: UserService,
 ) {
-    @GetMapping
+    @GetMapping("/{id}")
     fun findUserById(
         @PathVariable id: UUID,
     ): ApiResponse<UserResponse> {
