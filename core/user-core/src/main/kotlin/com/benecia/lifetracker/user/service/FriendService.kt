@@ -17,4 +17,16 @@ class FriendService(
     fun findAllByUserId(userId: UUID): List<FriendInfo> {
         return friendReader.findAllByUserId(userId)
     }
+
+    fun findPendingRequests(userId: UUID): List<FriendInfo> {
+        return friendReader.findPendingRequests(userId)
+    }
+
+    fun acceptRequest(userId: UUID, friendRequestId: Long): Long {
+        return friendAppender.acceptRequest(userId, friendRequestId)
+    }
+
+    fun rejectRequest(userId: UUID, friendRequestId: Long): Long {
+        return friendAppender.rejectRequest(userId, friendRequestId)
+    }
 }

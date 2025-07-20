@@ -2,6 +2,7 @@ package com.benecia.lifetracker.user.service
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.user.exception.FriendErrorCode
+import com.benecia.lifetracker.user.exception.UserErrorCode
 import com.benecia.lifetracker.user.model.command.NewFriend
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -18,5 +19,23 @@ class FriendAppender(
         }
 
         return friendRepository.add(userId, command.receiverId)
+    }
+
+    fun acceptRequest(userId: UUID, friendRequestId: Long): Long {
+        val request = friendRepository.findFriendRequestById(friendRequestId)
+        if (request.receiverId != userId) {
+            throw CoreException(UserErrorCode.USER_NOT_FOUND)
+        }
+
+        return friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.ACCEPTED)
+    }
+
+    fun rejectRequest(userId: UUID, friendRequestId: Long): Long {
+        val request = friendRepository.findFriendRequestById(friendRequestId)
+        if (request.receiverId != userId) {
+            throw CoreException(UserErrorCode.USER_NOT_FOUND)
+        }
+
+        return friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.REJECTED)
     }
 }
