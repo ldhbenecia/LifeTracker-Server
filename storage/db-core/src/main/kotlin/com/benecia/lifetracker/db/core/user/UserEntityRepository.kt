@@ -23,7 +23,7 @@ class UserEntityRepository(
         return userJpaRepository.save(entity).id!!
     }
 
-    override fun findById(id: UUID): User? {
+    override fun findById(id: UUID): User {
         val entity = userJpaRepository.findByIdOrNull(id)
             ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
         return entity.toDomain()

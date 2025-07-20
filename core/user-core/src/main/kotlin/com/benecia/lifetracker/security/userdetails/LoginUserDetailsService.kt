@@ -13,7 +13,8 @@ class LoginUserDetailsService(
 
     override fun loadUserByUsername(userId: String): UserDetails {
         val uuid = UUID.fromString(userId)
-        val user = userService.findById(uuid)
-        return LoginUser.from(user!!)
+        val userInfo = userService.findById(uuid)
+        val user = userInfo.toUser()
+        return LoginUser.from(user)
     }
 }

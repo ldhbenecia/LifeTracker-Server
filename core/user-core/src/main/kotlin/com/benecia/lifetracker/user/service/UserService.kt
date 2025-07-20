@@ -22,7 +22,7 @@ class UserService(
         return userReader.findById(id)
     }
 
-    fun findByProviderAndEmail(provider: String, email: String): UserInfo {
+    fun findByProviderAndEmail(provider: String, email: String): User? {
         return userReader.findByProviderAndEmail(provider, email)
     }
 }

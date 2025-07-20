@@ -1,5 +1,6 @@
 package com.benecia.lifetracker.user.model.info
 
+import com.benecia.lifetracker.user.service.User
 import java.util.UUID
 
 data class UserInfo(
@@ -8,4 +9,12 @@ data class UserInfo(
     val email: String,
     val displayName: String,
     val profileImageUrl: String?,
-)
+) {
+    fun toUser(): User = User(
+        id = this.id,
+        provider = this.provider,
+        email = this.email,
+        displayName = this.displayName,
+        profileImageUrl = this.profileImageUrl,
+    )
+}
