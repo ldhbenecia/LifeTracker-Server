@@ -27,6 +27,15 @@ class FriendController(
         return ApiResponse.created(id)
     }
 
+    @GetMapping
+    fun findAllByUserId(
+        @AuthenticationPrincipal loginUser: LoginUser
+    ): ApiResponse<List<FriendResponse>> {
+        val friends = friendService.findAllByUserId(loginUser.id)
+        val responseList = friends.map { FriendResponse.of(it) }
+        return ApiResponse.success(responseList)
+    }
+
     @GetMapping("/requests")
     fun findPendingRequests(
         @AuthenticationPrincipal loginUser: LoginUser,
