@@ -18,6 +18,5 @@ class RedirectUrlService(
         return "$webRedirectBaseUrl?error=${urlEncode(errorReason)}"
     }
 
-    private fun urlEncode(value: String): String =
-        URLEncoder.encode(value, StandardCharsets.UTF_8.toString())
+    private fun urlEncode(value: String): String = URLEncoder.encode(value, StandardCharsets.UTF_8.toString())
 }

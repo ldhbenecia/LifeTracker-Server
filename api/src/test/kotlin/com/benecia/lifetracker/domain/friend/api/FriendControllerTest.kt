@@ -24,7 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
-
 class FriendControllerTest : RestDocsTest() {
     private lateinit var friendService: FriendService
     private lateinit var controller: FriendController
@@ -63,15 +62,15 @@ class FriendControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     requestFields(
-                        fieldWithPath("receiverId").type(JsonFieldType.STRING).description("친구로 추가할 유저의 UUID")
+                        fieldWithPath("receiverId").type(JsonFieldType.STRING).description("친구로 추가할 유저의 UUID"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data").type(JsonFieldType.NUMBER).description("생성된 친구 요청 ID"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
@@ -87,8 +86,8 @@ class FriendControllerTest : RestDocsTest() {
                 id = 1L,
                 friendId = UUID.randomUUID(),
                 friendDisplayName = "Lim Dong Hyeok",
-                friendProfileImageUrl = "http://img.com/1.png"
-            )
+                friendProfileImageUrl = "http://img.com/1.png",
+            ),
         )
         every { friendService.findAllByUserId(userId) } returns friendList
 
@@ -110,8 +109,8 @@ class FriendControllerTest : RestDocsTest() {
                         fieldWithPath("data[].friendDisplayName").type(JsonFieldType.STRING).description("친구 이름"),
                         fieldWithPath("data[].friendProfileImageUrl").type(JsonFieldType.STRING).description("친구 프로필 이미지 URL").optional(),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
@@ -127,8 +126,8 @@ class FriendControllerTest : RestDocsTest() {
                 id = 2L,
                 friendId = UUID.randomUUID(),
                 friendDisplayName = "요청자1",
-                friendProfileImageUrl = "http://img.com/2.png"
-            )
+                friendProfileImageUrl = "http://img.com/2.png",
+            ),
         )
         every { friendService.findPendingRequests(userId) } returns pendingList
 
@@ -150,8 +149,8 @@ class FriendControllerTest : RestDocsTest() {
                         fieldWithPath("data[].friendDisplayName").type(JsonFieldType.STRING).description("요청자 이름"),
                         fieldWithPath("data[].friendProfileImageUrl").type(JsonFieldType.STRING).description("요청자 프로필 이미지 URL").optional(),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
@@ -176,15 +175,15 @@ class FriendControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     pathParameters(
-                        parameterWithName("friendRequestId").description("친구 요청 ID")
+                        parameterWithName("friendRequestId").description("친구 요청 ID"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data").type(JsonFieldType.NUMBER).description("수락된 친구 요청 ID"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
@@ -209,15 +208,15 @@ class FriendControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     pathParameters(
-                        parameterWithName("friendRequestId").description("친구 요청 ID")
+                        parameterWithName("friendRequestId").description("친구 요청 ID"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data").type(JsonFieldType.NUMBER).description("거절된 친구 요청 ID"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 }

@@ -29,7 +29,7 @@ class FriendController(
 
     @GetMapping
     fun findAllByUserId(
-        @AuthenticationPrincipal loginUser: LoginUser
+        @AuthenticationPrincipal loginUser: LoginUser,
     ): ApiResponse<List<FriendResponse>> {
         val friends = friendService.findAllByUserId(loginUser.id)
         val responseList = friends.map { FriendResponse.of(it) }
