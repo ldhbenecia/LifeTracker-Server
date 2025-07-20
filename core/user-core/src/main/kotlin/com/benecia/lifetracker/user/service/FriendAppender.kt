@@ -18,7 +18,13 @@ class FriendAppender(
             throw CoreException(FriendErrorCode.ALREADY_REQUESTED)
         }
 
-        return friendRepository.add(userId, command.receiverId)
+        val friend = Friend(
+            requesterId = userId,
+            receiverId = command.receiverId,
+            status = FriendStatus.PENDING,
+        )
+
+        return friendRepository.add(friend)
     }
 
     fun acceptRequest(userId: UUID, friendRequestId: Long): Long {

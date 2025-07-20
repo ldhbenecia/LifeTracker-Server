@@ -14,12 +14,8 @@ class FriendEntityRepository(
     private val friendJpaRepository: FriendJpaRepository,
 ) : FriendRepository {
 
-    override fun add(requesterId: UUID, receiverId: UUID): Long {
-        val entity = FriendEntity(
-            requesterId = requesterId,
-            receiverId = receiverId,
-        )
-
+    override fun add(friend: Friend): Long {
+        val entity = FriendEntity.from(friend)
         return friendJpaRepository.save(entity).id!!
     }
 
