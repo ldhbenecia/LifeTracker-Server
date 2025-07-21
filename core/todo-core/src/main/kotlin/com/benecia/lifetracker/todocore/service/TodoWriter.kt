@@ -29,11 +29,13 @@ data class TodoWriter(
     fun modify(userId: UUID, id: Long, command: ModifyTodo): Long {
         val existingTodo = todoReader.findById(userId, id)
 
+        // category가 변경되었으면 새 categoryId 조회, 아니면 기존 categoryId 유지
         val newCategoryId = command.category?.let { categoryName ->
-            categoryReader.findByUserIdAndName(userId, categoryName)?.id
+            categoryReader.findByUserIdAndName(userId, categoryName).id
         } ?: existingTodo.category.id
 
         val modifiedTodo = Todo(
+            id = id,
             userId = userId,
             title = command.title ?: existingTodo.title,
             categoryId = newCategoryId,

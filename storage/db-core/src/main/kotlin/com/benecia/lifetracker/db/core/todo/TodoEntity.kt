@@ -41,6 +41,7 @@ class TodoEntity(
     companion object {
         fun from(todo: Todo): TodoEntity {
             return TodoEntity(
+                id = todo.id,
                 userId = todo.userId,
                 title = todo.title,
                 categoryId = todo.categoryId,
