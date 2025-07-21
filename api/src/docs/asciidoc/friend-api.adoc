@@ -1,0 +1,65 @@
+:snippets: ../../../build/generated-snippets
+
+== Friend API
+
+=== Add Friend
+==== HTTP Request
+include::{snippets}/addFriend/http-request.adoc[]
+==== Request Fields
+include::{snippets}/addFriend/request-fields.adoc[]
+==== HTTP Response
+include::{snippets}/addFriend/http-response.adoc[]
+==== Response Fields
+include::{snippets}/addFriend/response-fields.adoc[]
+
+'''
+
+=== Find All Friends
+==== HTTP Request
+include::{snippets}/findAllFriends/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/findAllFriends/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/findAllFriends/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findAllFriends/response-fields.adoc[]
+
+'''
+
+=== Find Pending Friend Requests
+==== HTTP Request
+include::{snippets}/findPendingFriendRequests/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/findPendingFriendRequests/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/findPendingFriendRequests/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findPendingFriendRequests/response-fields.adoc[]
+
+'''
+
+=== Accept Friend Request
+==== HTTP Request
+include::{snippets}/acceptFriendRequest/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/acceptFriendRequest/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/acceptFriendRequest/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/acceptFriendRequest/http-response.adoc[]
+==== Response Fields
+include::{snippets}/acceptFriendRequest/response-fields.adoc[]
+
+'''
+
+=== Reject Friend Request
+==== HTTP Request
+include::{snippets}/rejectFriendRequest/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/rejectFriendRequest/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/rejectFriendRequest/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/rejectFriendRequest/http-response.adoc[]
+==== Response Fields
+include::{snippets}/rejectFriendRequest/response-fields.adoc[]

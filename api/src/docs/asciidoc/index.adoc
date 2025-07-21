@@ -11,52 +11,5 @@
 
 This is the Core API documentation.
 
-== Todo API
-
-=== Find Todo
-==== HTTP Request
-include::{snippets}/findTodo/http-request.adoc[]
-==== Path Parameters
-include::{snippets}/findTodo/path-parameters.adoc[]
-==== HTTP Response
-include::{snippets}/findTodo/http-response.adoc[]
-==== Response Fields
-include::{snippets}/findTodo/response-fields.adoc[]
-
-'''
-
-=== Add Todo
-==== HTTP Request
-include::{snippets}/addTodo/http-request.adoc[]
-==== Request Fields
-include::{snippets}/addTodo/request-fields.adoc[]
-==== HTTP Response
-include::{snippets}/addTodo/http-response.adoc[]
-==== Response Fields
-include::{snippets}/addTodo/response-fields.adoc[]
-
-'''
-
-=== Find Todos By Month
-==== HTTP Request
-include::{snippets}/findTodosByMonth/http-request.adoc[]
-==== Query Parameters
-include::{snippets}/findTodosByMonth/query-parameters.adoc[]
-==== HTTP Response
-include::{snippets}/findTodosByMonth/http-response.adoc[]
-==== Response Fields
-include::{snippets}/findTodosByMonth/response-fields.adoc[]
-
-'''
-
-=== Modify Todo
-==== HTTP Request
-include::{snippets}/modifyTodo/http-request.adoc[]
-==== Path Parameters
-include::{snippets}/modifyTodo/path-parameters.adoc[]
-==== Request Fields
-include::{snippets}/modifyTodo/request-fields.adoc[]
-==== HTTP Response
-include::{snippets}/modifyTodo/http-response.adoc[]
-==== Response Fields
-include::{snippets}/modifyTodo/response-fields.adoc[]
+include::todo-api.adoc[]
+include::friend-api.adoc[]
