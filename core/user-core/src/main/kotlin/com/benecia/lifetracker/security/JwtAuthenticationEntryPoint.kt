@@ -22,7 +22,7 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
 
         val body = mapOf(
             "error" to "UNAUTHORIZED",
-            "message" to "인증이 필요합니다. 올바른 토큰을 포함해 요청해 주세요."
+            "message" to "인증이 필요합니다. 올바른 토큰을 포함해 요청해 주세요.",
         )
 
         response.writer.use {
