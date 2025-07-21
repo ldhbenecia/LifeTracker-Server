@@ -8,4 +8,5 @@ interface CategoryJpaRepository : JpaRepository<CategoryEntity, Long> {
     fun findByUserIdAndIdIn(userId: UUID, ids: List<Long>): List<CategoryEntity>
     fun findByUserIdAndName(userId: UUID, name: String): CategoryEntity?
     fun findAllByUserId(userId: UUID): List<CategoryEntity>
+    fun existsByUserIdAndName(userId: UUID, name: String): Boolean
 }

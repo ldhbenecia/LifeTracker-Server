@@ -55,4 +55,8 @@ data class CategoryReader(
             )
         }
     }
+
+    fun existsByUserIdAndName(userId: UUID, name: String): Boolean {
+        return categoryRepository.existsByUserIdAndName(userId, name)
+    }
 }
