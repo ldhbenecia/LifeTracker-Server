@@ -78,4 +78,15 @@ subprojects {
     tasks.getByName("asciidoctor") {
         dependsOn("restDocsTest")
     }
+
+    tasks.named<org.asciidoctor.gradle.jvm.AsciidoctorTask>("asciidoctor") {
+        inputs.dir("build/generated-snippets")
+        dependsOn("restDocsTest")
+
+        sources {
+            include("**/index.adoc")
+        }
+
+        baseDirFollowsSourceFile()
+    }
 }
