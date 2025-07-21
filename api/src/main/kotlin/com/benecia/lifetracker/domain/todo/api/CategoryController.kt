@@ -4,10 +4,13 @@ import com.benecia.lifetracker.common.response.ApiResponse
 import com.benecia.lifetracker.domain.todo.dto.AddCategoryRequest
 import com.benecia.lifetracker.domain.todo.dto.AddCategoryResponse
 import com.benecia.lifetracker.domain.todo.dto.CategoryResponse
+import com.benecia.lifetracker.domain.todo.dto.ModifyCategoryRequest
+import com.benecia.lifetracker.domain.todo.dto.ModifyCategoryResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.todocore.service.CategoryService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -54,5 +57,15 @@ class CategoryController(
     ): ApiResponse<AddCategoryResponse> {
         val category = categoryService.add(loginUser.id, command.toAddCategory())
         return ApiResponse.success(AddCategoryResponse(category))
+    }
+
+    @PatchMapping("/{id}")
+    fun modifyCategory(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable id: Long,
+        @RequestBody command: ModifyCategoryRequest,
+    ): ApiResponse<ModifyCategoryResponse> {
+        val categoryId = categoryService.modify(loginUser.id, id, command.toModifyCategory())
+        return ApiResponse.success(ModifyCategoryResponse(categoryId))
     }
 }

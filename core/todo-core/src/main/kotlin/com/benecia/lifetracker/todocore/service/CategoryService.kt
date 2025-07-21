@@ -1,6 +1,7 @@
 package com.benecia.lifetracker.todocore.service
 
 import com.benecia.lifetracker.todocore.model.command.AddCategory
+import com.benecia.lifetracker.todocore.model.command.ModifyCategory
 import com.benecia.lifetracker.todocore.model.info.CategoryInfo
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -28,5 +29,9 @@ class CategoryService(
 
     fun add(userId: UUID, command: AddCategory): Long {
         return categoryWriter.add(userId, command)
+    }
+
+    fun modify(userId: UUID, id: Long, command: ModifyCategory): Long {
+        return categoryWriter.modify(userId, id, command)
     }
 }

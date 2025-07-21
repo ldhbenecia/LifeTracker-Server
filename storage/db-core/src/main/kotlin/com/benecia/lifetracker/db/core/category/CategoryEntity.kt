@@ -26,13 +26,13 @@ class CategoryEntity(
     val userId: UUID,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false)
-    val icon: String,
+    var icon: String,
 
     @Column(nullable = false)
-    val color: String,
+    var color: String,
 
 ) : BaseEntity() {
 
