@@ -34,13 +34,12 @@ class UserEntityRepository(
     }
 
     override fun update(user: User): User {
-        val entity = userJpaRepository.findById(user.id ?: throw CoreException(UserErrorCode.USER_NOT_FOUND))
-            .orElseThrow { CoreException(UserErrorCode.USER_NOT_FOUND) }
+        val entity = userJpaRepository.findByIdOrNull(user.id!!)
+            ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
 
         entity.displayName = user.displayName
         entity.profileImageUrl = user.profileImageUrl
 
-        val updatedEntity = userJpaRepository.save(entity)
-        return updatedEntity.toDomain()
+        return entity.toDomain()
     }
 }
