@@ -47,7 +47,7 @@ class JwtAuthenticationFilter(
                 }
             }
         } catch (exception: Exception) {
-            logger.error("JWT 인증 실패", exception)
+            logger.warn("JWT 인증 실패: ${exception.message}")
         }
 
         filterChain.doFilter(request, response)
