@@ -235,7 +235,7 @@ class TodoControllerTest : RestDocsTest() {
         given()
             .contentType(ContentType.JSON)
             .body(requestBody)
-            .put("/api/v1/todos/{id}", todoId)
+            .patch("/api/v1/todos/{id}", todoId)
             .then()
             .status(HttpStatus.OK)
             .apply(
