@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
   prometheus:
+    container_name: sent_prometheus
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
@@ -10,9 +9,15 @@ services:
     restart: unless-stopped
 
   grafana:
+    container_name: sent_grafana
     image: grafana/grafana:latest
     ports:
       - "3001:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
     restart: unless-stopped
+
+volumes:
+  grafana-data:
