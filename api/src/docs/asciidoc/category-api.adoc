@@ -1,0 +1,61 @@
+:snippets: ../../../build/generated-snippets
+
+== Category API
+
+=== Get All Categories
+==== HTTP Request
+include::{snippets}/findAllCategories/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/findAllCategories/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findAllCategories/response-fields.adoc[]
+
+'''
+
+=== Get Category by ID
+==== HTTP Request
+include::{snippets}/findCategoryById/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/findCategoryById/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/findCategoryById/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findCategoryById/response-fields.adoc[]
+
+'''
+
+=== Get Category by Name
+==== HTTP Request
+include::{snippets}/findCategoryByName/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/findCategoryByName/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/findCategoryByName/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findCategoryByName/response-fields.adoc[]
+
+'''
+
+=== Add Category
+==== HTTP Request
+include::{snippets}/addCategory/http-request.adoc[]
+==== Request Fields
+include::{snippets}/addCategory/request-fields.adoc[]
+==== HTTP Response
+include::{snippets}/addCategory/http-response.adoc[]
+==== Response Fields
+include::{snippets}/addCategory/response-fields.adoc[]
+
+'''
+
+=== Modify Category
+==== HTTP Request
+include::{snippets}/modifyCategory/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/modifyCategory/path-parameters.adoc[]
+==== Request Fields
+include::{snippets}/modifyCategory/request-fields.adoc[]
+==== HTTP Response
+include::{snippets}/modifyCategory/http-response.adoc[]
+==== Response Fields
+include::{snippets}/modifyCategory/response-fields.adoc[]
