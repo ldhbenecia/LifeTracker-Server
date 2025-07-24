@@ -3,6 +3,7 @@ rootProject.name = "life-tracker"
 include(
     "api",
     "common",
+    "chat",
     "storage:db-core",
     "tests:api-docs",
     "core:user-core",
