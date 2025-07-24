@@ -8,7 +8,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-class WebSocketConfig : WebSocketMessageBrokerConfigurer {
+class WebSocketConfig(
+    private val authHandshakeInterceptor: AuthHandshakeInterceptor,
+) : WebSocketMessageBrokerConfigurer {
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
         registry.enableSimpleBroker("/topic")
@@ -16,6 +18,8 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/ws-chat").setAllowedOriginPatterns("*")
+        registry.addEndpoint("/ws-chat")
+            .setAllowedOriginPatterns("*")
+            .addInterceptors(authHandshakeInterceptor)
     }
 }
