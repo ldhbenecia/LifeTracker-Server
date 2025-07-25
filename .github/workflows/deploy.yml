@@ -39,8 +39,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:develop
-            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:${{ github.run_number }}
 
       - name: Verify Docker image push
         run: |
