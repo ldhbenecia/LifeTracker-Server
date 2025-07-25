@@ -33,6 +33,7 @@ class SecurityConfig(
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers("/login/oauth2/**").permitAll()
+                    .requestMatchers("/health").permitAll()
                     .requestMatchers(EndpointRequest.to("prometheus")).permitAll()
                     .anyRequest().authenticated()
             }
