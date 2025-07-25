@@ -51,7 +51,7 @@ storage:
   datasource:
     core:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://localhost:3307/${MYSQL_DATABASE}
+      jdbc-url: jdbc:mysql://mysql_sent:3306/${MYSQL_DATABASE}
       username: ${MYSQL_USER}
       password: ${MYSQL_PASSWORD}
       maximum-pool-size: 5
