@@ -16,10 +16,14 @@ jobs:
         run: |
           mkdir -p api/src/main/resources
           echo "${{ secrets.APPLICATION_DEV }}" > api/src/main/resources/application.yml
+          echo "✅ application.yml created successfully"
+          ls -la api/src/main/resources/
 
       - name: Create .env
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          echo "✅ .env file created successfully"
+          echo "📄 .env file size: $(wc -c < .env) bytes"
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -34,6 +38,11 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
+
+      - name: Verify Docker image push
+        run: |
+          echo "✅ Docker image pushed successfully"
+          echo "🐳 Image tag: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest"
 
       - name: Copy .env to server
         uses: appleboy/scp-action@v0.1.7
@@ -62,6 +71,47 @@ jobs:
           source: .
           target: /home/sentthoughts/Sent-Server/
 
+      - name: Verify files copied to server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "📁 Checking files in /home/sentthoughts/Sent-Server/"
+            ls -la /home/sentthoughts/Sent-Server/
+            echo ""
+            echo "📄 Checking .env file:"
+            if [ -f "/home/sentthoughts/Sent-Server/.env" ]; then
+              echo "✅ .env file exists ($(wc -c < /home/sentthoughts/Sent-Server/.env) bytes)"
+            else
+              echo "❌ .env file not found!"
+            fi
+            echo ""
+            echo "📄 Checking docker-compose.yml:"
+            if [ -f "/home/sentthoughts/Sent-Server/docker-compose.yml" ]; then
+              echo "✅ docker-compose.yml exists"
+              cat /home/sentthoughts/Sent-Server/docker-compose.yml
+            else
+              echo "❌ docker-compose.yml not found!"
+            fi
+
+      - name: Check Docker status before deployment
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "🐳 Current Docker containers:"
+            docker ps -a
+            echo ""
+            echo "🌐 Current Docker networks:"
+            docker network ls
+            echo ""
+            echo "💾 Docker system info:"
+            docker system df
+
       - name: Deploy on server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -70,10 +120,23 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/sentthoughts/Sent-Server
+            echo "📍 Current directory: $(pwd)"
+            
+            echo "🚀 Starting docker-compose up..."
             docker-compose up -d
+            echo "✅ docker-compose up completed"
+            
+            echo "📥 Pulling latest Docker image..."
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
-            docker stop sent_app || true
-            docker rm sent_app || true
+            echo "✅ Docker image pulled successfully"
+            
+            echo "🛑 Stopping existing sent_app container..."
+            docker stop sent_app || echo "⚠️ No sent_app container was running"
+            
+            echo "🗑️ Removing existing sent_app container..."
+            docker rm sent_app || echo "⚠️ No sent_app container to remove"
+            
+            echo "🔄 Starting new sent_app container..."
             docker run -d \
               --name sent_app \
               --network sent-server_sent_net \
@@ -81,6 +144,13 @@ jobs:
               -e SPRING_PROFILES_ACTIVE=dev \
               -p 8080:8080 \
               ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
+            
+            echo "✅ New container started"
+            echo "📋 Container status:"
+            docker ps | grep sent_app || echo "❌ sent_app container not found in running containers"
+            
+            echo "📝 Container logs (last 20 lines):"
+            docker logs --tail 20 sent_app
 
       - name: Health check (wait for /health)
         uses: appleboy/ssh-action@v0.1.7
@@ -89,17 +159,39 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            echo "🏥 Starting health check..."
             for i in {1..6}
             do
+              echo "⏰ Health check attempt $i/6 (waiting 4 seconds...)"
               sleep 4
+            
               STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health || echo "000")
+              echo "📊 Health check status: $STATUS"
+            
               if [ "$STATUS" = "200" ]; then
-                echo "Health check passed!"
+                echo "✅ Health check passed!"
+                echo "🎉 Application is running successfully!"
                 exit 0
               else
-                echo "Waiting for health check... (status: $STATUS)"
+                echo "⚠️ Waiting for health check... (status: $STATUS)"
+                echo "📝 Current container logs:"
+                docker logs --tail 10 sent_app
+                echo "🔍 Container status:"
+                docker ps | grep sent_app || echo "❌ sent_app container not running"
               fi
             done
-            echo "Health check failed!"
+            
+            echo "❌ Health check failed after 6 attempts!"
+            echo "🔍 Final container status:"
+            docker ps -a | grep sent_app
+            echo ""
+            echo "📝 Full container logs:"
             docker logs --tail 100 sent_app
+            echo ""
+            echo "🌐 Network connectivity test:"
+            curl -v http://localhost:8080/health || echo "Connection failed"
+            echo ""
+            echo "📊 System resources:"
+            df -h
+            free -h
             exit 1
