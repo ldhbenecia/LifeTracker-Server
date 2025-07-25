@@ -1,0 +1,74 @@
+name: Deploy to GCP Compute Engine
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create application.yml in api module
+        run: |
+          mkdir -p api/src/main/resources
+          echo "${{ secrets.APPLICATION_DEV }}" > api/src/main/resources/application.yml
+
+      - name: Create .env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
+
+      - name: Copy .env to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: .env
+          target: /home/sentthoughts/Sent-Server/
+
+      - name: Copy docker-compose.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: docker-compose.yml
+          target: /home/sentthoughts/Sent-Server/
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/sentthoughts/Sent-Server
+            docker-compose up -d
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
+            docker stop sent_app || true
+            docker rm sent_app || true
+            docker run -d \
+              --name sent_app \
+              --network sent-server_sent_net \
+              --env-file .env \
+              -e SPRING_PROFILES_ACTIVE=dev \
+              -p 8080:8080 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
