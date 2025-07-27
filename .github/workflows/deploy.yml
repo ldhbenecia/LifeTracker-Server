@@ -37,38 +37,22 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:${{ github.run_number }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:${{ github.run_number }}
 
       - name: Verify Docker image push
         run: |
           echo "✅ Docker image pushed successfully"
           echo "🐳 Image tag: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest"
 
-      - name: Copy .env to server
+      - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: .env
-          target: /home/sentthoughts/Sent-Server/
-
-      - name: Copy docker-compose.yml to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: docker-compose.yml
-          target: /home/sentthoughts/Sent-Server/
-
-      - name: Copy source code to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: .
+          source: ".env,docker-compose.yml,nginx/"
           target: /home/sentthoughts/Sent-Server/
 
       - name: Verify files copied to server
@@ -91,9 +75,44 @@ jobs:
             echo "📄 Checking docker-compose.yml:"
             if [ -f "/home/sentthoughts/Sent-Server/docker-compose.yml" ]; then
               echo "✅ docker-compose.yml exists"
-              cat /home/sentthoughts/Sent-Server/docker-compose.yml
             else
               echo "❌ docker-compose.yml not found!"
+            fi
+            echo ""
+            echo "📁 Checking nginx directory:"
+            if [ -d "/home/sentthoughts/Sent-Server/nginx" ]; then
+              echo "✅ nginx directory exists"
+              ls -la /home/sentthoughts/Sent-Server/nginx/
+            else
+              echo "❌ nginx directory not found!"
+            fi
+
+      - name: Setup SSL certificates
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/sentthoughts/Sent-Server
+            echo "🔐 Setting up SSL certificates..."
+            
+            # Create certs directory if it doesn't exist
+            if [ ! -d "certs" ]; then
+              echo "📁 Creating certs directory..."
+              ln -s /home/ubuntu/certs/devcerts ./certs
+              echo "✅ SSL certificates linked successfully"
+            else
+              echo "✅ SSL certificates already configured"
+            fi
+            
+            # Verify certificates
+            if [ -f "certs/fullchain.pem" ] && [ -f "certs/privkey.pem" ]; then
+              echo "✅ SSL certificates verified"
+              ls -la certs/
+            else
+              echo "❌ SSL certificates not found!"
+              exit 1
             fi
 
       - name: Check Docker status before deployment
@@ -112,7 +131,7 @@ jobs:
             echo "💾 Docker system info:"
             docker system df
 
-      - name: Deploy on server
+      - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -122,35 +141,23 @@ jobs:
             cd /home/sentthoughts/Sent-Server
             echo "📍 Current directory: $(pwd)"
             
-            echo "🚀 Starting docker-compose up..."
+            echo "📥 Pulling latest Docker images..."
+            docker-compose pull
+            echo "✅ Docker images pulled successfully"
+            
+            echo "🛑 Stopping existing services..."
+            docker-compose down
+            echo "✅ Services stopped"
+            
+            echo "🚀 Starting services with docker-compose..."
             docker-compose up -d
-            echo "✅ docker-compose up completed"
+            echo "✅ Services started successfully"
             
-            echo "📥 Pulling latest Docker image..."
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
-            echo "✅ Docker image pulled successfully"
-            
-            echo "🛑 Stopping existing sent_app container..."
-            docker stop sent_app || echo "⚠️ No sent_app container was running"
-            
-            echo "🗑️ Removing existing sent_app container..."
-            docker rm sent_app || echo "⚠️ No sent_app container to remove"
-            
-            echo "🔄 Starting new sent_app container..."
-            docker run -d \
-              --name sent_app \
-              --network sent-server_sent_net \
-              --env-file .env \
-              -e SPRING_PROFILES_ACTIVE=dev \
-              -p 8080:8080 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
-            
-            echo "✅ New container started"
             echo "📋 Container status:"
-            docker ps | grep sent_app || echo "❌ sent_app container not found in running containers"
+            docker-compose ps
             
-            echo "📝 Container logs (last 20 lines):"
-            docker logs --tail 20 sent_app
+            echo "📝 Service logs (last 20 lines):"
+            docker-compose logs --tail 20
 
       - name: Health check (wait for /health)
         uses: appleboy/ssh-action@v0.1.7
@@ -160,36 +167,55 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             echo "🏥 Starting health check..."
-            for i in {1..6}
+            
+            # Wait for services to start
+            echo "⏰ Waiting for services to initialize..."
+            sleep 10
+            
+            for i in {1..12}
             do
               echo "⏰ Health check attempt $i/6 (waiting 4 seconds...)"
               sleep 4
             
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health || echo "000")
-              echo "📊 Health check status: $STATUS"
+              # Check if nginx is responding
+              NGINX_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost || echo "000")
+              echo "📊 Nginx status: $NGINX_STATUS"
             
-              if [ "$STATUS" = "200" ]; then
+              # Check if backend is responding through nginx
+              BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health || echo "000")
+              echo "📊 Backend health status: $BACKEND_STATUS"
+            
+              if [ "$BACKEND_STATUS" = "200" ]; then
                 echo "✅ Health check passed!"
                 echo "🎉 Application is running successfully!"
+            
+                # Final status check
+                echo "📋 Final service status:"
+                docker-compose ps
+            
+                # Test HTTPS if available
+                HTTPS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost || echo "000")
+                echo "🔐 HTTPS status: $HTTPS_STATUS"
+            
                 exit 0
               else
-                echo "⚠️ Waiting for health check... (status: $STATUS)"
-                echo "📝 Current container logs:"
-                docker logs --tail 10 sent_app
-                echo "🔍 Container status:"
-                docker ps | grep sent_app || echo "❌ sent_app container not running"
+                echo "⚠️ Waiting for services... (nginx: $NGINX_STATUS, backend: $BACKEND_STATUS)"
+                echo "📝 Current service logs:"
+                docker-compose logs --tail 5 sent_server nginx
+                echo "🔍 Service status:"
+                docker-compose ps
               fi
             done
             
-            echo "❌ Health check failed after 6 attempts!"
-            echo "🔍 Final container status:"
-            docker ps -a | grep sent_app
+            echo "❌ Health check failed after 12 attempts!"
+            echo "🔍 Final service status:"
+            docker-compose ps
             echo ""
-            echo "📝 Full container logs:"
-            docker logs --tail 100 sent_app
+            echo "📝 Full service logs:"
+            docker-compose logs --tail 50
             echo ""
             echo "🌐 Network connectivity test:"
-            curl -v http://localhost:8080/health || echo "Connection failed"
+            curl -v http://localhost || echo "Connection failed"
             echo ""
             echo "📊 System resources:"
             df -h
