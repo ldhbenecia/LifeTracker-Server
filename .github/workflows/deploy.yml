@@ -188,15 +188,20 @@ jobs:
               echo "⏰ Health check attempt $i/12 (waiting 5 seconds...)"
               sleep 5
             
-              # Check if nginx is responding
-              NGINX_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost || echo "000")
-              echo "📊 Nginx status: $NGINX_STATUS"
+              # Check if nginx is responding (HTTP - should redirect to HTTPS)
+              NGINX_HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost || echo "000")
+              echo "📊 Nginx HTTP status (should be 301 redirect): $NGINX_HTTP_STATUS"
+              
+              # Check if HTTPS is working
+              NGINX_HTTPS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost || echo "000")
+              echo "📊 Nginx HTTPS status: $NGINX_HTTPS_STATUS"
+              
+              # Check if backend is responding through nginx HTTPS
+              BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/health || echo "000")
+              echo "📊 Backend health status (HTTPS): $BACKEND_STATUS"
             
-              # Check if backend is responding through nginx
-              BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health || echo "000")
-              echo "📊 Backend health status: $BACKEND_STATUS"
-            
-              if [ "$BACKEND_STATUS" = "200" ]; then
+              # Success conditions: Either HTTPS localhost or domain should return 200
+              if [ "$BACKEND_STATUS" = "200" ] || [ "$DOMAIN_STATUS" = "200" ]; then
                 echo "✅ Health check passed!"
                 echo "🎉 Application is running successfully!"
             
@@ -204,20 +209,36 @@ jobs:
                 echo "📋 Final service status:"
                 docker-compose ps
             
-                # Test HTTPS if available
-                HTTPS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost || echo "000")
-                echo "🔐 HTTPS status: $HTTPS_STATUS"
+                # Additional verification
+                echo "🔍 Final verification:"
+                echo "  - HTTP to HTTPS redirect: $NGINX_HTTP_STATUS"
+                echo "  - HTTPS localhost: $NGINX_HTTPS_STATUS"
+                echo "  - Backend via HTTPS: $BACKEND_STATUS"
+                echo "  - Domain access: $DOMAIN_STATUS"
             
+                # Test actual response content
+                HEALTH_RESPONSE=$(curl -s -k https://localhost/health || echo "No response")
+                echo "  - Health response: $HEALTH_RESPONSE"
+                
                 exit 0
               else
-                echo "⚠️ Waiting for services... (nginx: $NGINX_STATUS, backend: $BACKEND_STATUS)"
+                echo "⚠️ Waiting for services..."
+                echo "  - HTTP redirect: $NGINX_HTTP_STATUS (expected: 301)"
+                echo "  - HTTPS: $NGINX_HTTPS_STATUS"
+                echo "  - Backend: $BACKEND_STATUS"
+                echo "  - Domain: $DOMAIN_STATUS"
+            
                 echo "📝 Current service logs:"
                 if [ -f "docker-compose.yml" ]; then
-                  docker-compose logs --tail 5 sent_server nginx 2>/dev/null || echo "⚠️ Unable to get docker-compose logs"
+                  echo "🐳 Nginx logs:"
+                  docker-compose logs --tail 3 nginx_proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
+                  echo "🚀 Backend logs:"
+                  docker-compose logs --tail 3 sent_server 2>/dev/null || echo "⚠️ Unable to get backend logs"
                 else
                   echo "❌ docker-compose.yml not found in $(pwd)"
                   ls -la
                 fi
+                
                 echo "🔍 Service status:"
                 if [ -f "docker-compose.yml" ]; then
                   docker-compose ps 2>/dev/null || echo "⚠️ Unable to get docker-compose status"
@@ -228,18 +249,28 @@ jobs:
               fi
             done
             
-            echo "❌ Health check failed after 12 attempts!"
-            
-            # Debug information
+            cho "❌ Health check failed after 12 attempts!"
+      
+            # Enhanced debug information
             echo "🔍 Current directory and files:"
             pwd
             ls -la
+            
+            echo "🔍 SSL certificates check:"
+            if [ -d "certs" ]; then
+              echo "✅ Certs directory exists"
+              ls -la certs/
+            else
+              echo "❌ Certs directory not found"
+            fi
             
             echo "🔍 Docker-compose file check:"
             if [ -f "docker-compose.yml" ]; then
               echo "✅ docker-compose.yml exists"
               docker-compose ps 2>/dev/null || echo "❌ docker-compose ps failed"
-              docker-compose logs --tail 50 2>/dev/null || echo "❌ docker-compose logs failed"
+              echo "📝 Detailed logs:"
+              docker-compose logs --tail 20 nginx_proxy 2>/dev/null || echo "❌ nginx logs failed"
+              docker-compose logs --tail 20 sent_server 2>/dev/null || echo "❌ backend logs failed"
             else
               echo "❌ docker-compose.yml NOT FOUND!"
               echo "Available files:"
@@ -248,11 +279,19 @@ jobs:
             
             echo "🔍 Manual container check:"
             docker ps -a | grep -E "(sent_server|nginx_proxy|mysql_sent|rabbitmq_sent)" || echo "No related containers found"
+            
+            echo "🌐 Network connectivity tests:"
+            echo "HTTP test:"
+            curl -v http://localhost 2>&1 | head -10 || echo "HTTP connection failed"
             echo ""
-            echo "🌐 Network connectivity test:"
-            curl -v http://localhost || echo "Connection failed"
-            echo ""
+            echo "HTTPS test:"
+            curl -v -k https://localhost 2>&1 | head -10 || echo "HTTPS connection failed"
+            
             echo "📊 System resources:"
             df -h
             free -h
+            
+            echo "🔍 Port usage:"
+            netstat -tlnp | grep -E ":80|:443|:8080" || echo "No ports found"
+            
             exit 1
