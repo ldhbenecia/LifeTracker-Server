@@ -55,10 +55,6 @@ services:
       - "443:443"
     env_file:
       - ./.env
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-      - BACKEND_SERVICE=sent_server
-      - BACKEND_PORT=8080
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
       - /home/ubuntu/certs/devcerts:/etc/certs:ro
