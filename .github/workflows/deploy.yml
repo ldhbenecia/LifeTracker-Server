@@ -46,13 +46,23 @@ jobs:
           echo "✅ Docker image pushed successfully"
           echo "🐳 Image tag: ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest"
 
+      - name: Prepare server directory
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            mkdir -p /home/sentthoughts/Sent-Server
+            echo "📁 Server directory prepared"
+
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: ".env,docker-compose.yml,nginx/"
+          source: ".env,docker-compose.yml,nginx"
           target: /home/sentthoughts/Sent-Server/
 
       - name: Verify files copied to server
@@ -159,13 +169,14 @@ jobs:
             echo "📝 Service logs (last 20 lines):"
             docker-compose logs --tail 20
 
-      - name: Health check (wait for /health)
+      - name: Health check
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            cd /home/sentthoughts/Sent-Server
             echo "🏥 Starting health check..."
             
             # Wait for services to start
@@ -174,8 +185,8 @@ jobs:
             
             for i in {1..12}
             do
-              echo "⏰ Health check attempt $i/6 (waiting 4 seconds...)"
-              sleep 4
+              echo "⏰ Health check attempt $i/12 (waiting 5 seconds...)"
+              sleep 5
             
               # Check if nginx is responding
               NGINX_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost || echo "000")
@@ -201,18 +212,42 @@ jobs:
               else
                 echo "⚠️ Waiting for services... (nginx: $NGINX_STATUS, backend: $BACKEND_STATUS)"
                 echo "📝 Current service logs:"
-                docker-compose logs --tail 5 sent_server nginx
+                if [ -f "docker-compose.yml" ]; then
+                  docker-compose logs --tail 5 sent_server nginx 2>/dev/null || echo "⚠️ Unable to get docker-compose logs"
+                else
+                  echo "❌ docker-compose.yml not found in $(pwd)"
+                  ls -la
+                fi
                 echo "🔍 Service status:"
-                docker-compose ps
+                if [ -f "docker-compose.yml" ]; then
+                  docker-compose ps 2>/dev/null || echo "⚠️ Unable to get docker-compose status"
+                else
+                  echo "❌ docker-compose.yml not found"
+                  docker ps -a | grep -E "(sent_server|nginx_proxy|mysql_sent|rabbitmq_sent)" || echo "No related containers found"
+                fi
               fi
             done
             
             echo "❌ Health check failed after 12 attempts!"
-            echo "🔍 Final service status:"
-            docker-compose ps
-            echo ""
-            echo "📝 Full service logs:"
-            docker-compose logs --tail 50
+            
+            # Debug information
+            echo "🔍 Current directory and files:"
+            pwd
+            ls -la
+            
+            echo "🔍 Docker-compose file check:"
+            if [ -f "docker-compose.yml" ]; then
+              echo "✅ docker-compose.yml exists"
+              docker-compose ps 2>/dev/null || echo "❌ docker-compose ps failed"
+              docker-compose logs --tail 50 2>/dev/null || echo "❌ docker-compose logs failed"
+            else
+              echo "❌ docker-compose.yml NOT FOUND!"
+              echo "Available files:"
+              ls -la
+            fi
+            
+            echo "🔍 Manual container check:"
+            docker ps -a | grep -E "(sent_server|nginx_proxy|mysql_sent|rabbitmq_sent)" || echo "No related containers found"
             echo ""
             echo "🌐 Network connectivity test:"
             curl -v http://localhost || echo "Connection failed"
