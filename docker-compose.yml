@@ -32,6 +32,42 @@ services:
     networks:
       - sent_net
 
+  sent_server:
+    image: ldhbenecia/sent-app:latest
+    container_name: sent_server
+    env_file:
+      - ./.env
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    expose:
+      - "8080"
+    networks:
+      - sent_net
+    depends_on:
+      - mysql
+      - rabbitmq
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - ./.env
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - BACKEND_SERVICE=sent_server
+      - BACKEND_PORT=8080
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - /home/ubuntu/certs/devcerts:/etc/certs:ro
+    command: /bin/sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    depends_on:
+      - sent_server
+    networks:
+      - sent_net
+
 volumes:
   mysql_data:
   rabbitmq-data:
