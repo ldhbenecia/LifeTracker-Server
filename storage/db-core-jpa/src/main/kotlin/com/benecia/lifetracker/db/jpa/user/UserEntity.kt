@@ -1,6 +1,6 @@
-package com.benecia.lifetracker.db.core.user
+package com.benecia.lifetracker.db.jpa.user
 
-import com.benecia.lifetracker.db.core.BaseEntity
+import com.benecia.lifetracker.db.jpa.BaseEntity
 import com.benecia.lifetracker.user.service.User
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.config
+package com.benecia.lifetracker.db.jpa.config
 
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Configuration
@@ -7,6 +7,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @Configuration
 @EnableTransactionManagement
-@EntityScan(basePackages = ["com.benecia.lifetracker.db.core"])
-@EnableJpaRepositories(basePackages = ["com.benecia.lifetracker.db.core"])
+@EntityScan(basePackages = ["com.benecia.lifetracker.db.jpa"])
+@EnableJpaRepositories(basePackages = ["com.benecia.lifetracker.db.jpa"])
 internal class CoreJpaConfig

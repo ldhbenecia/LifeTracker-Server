@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.user
+package com.benecia.lifetracker.db.jpa.user
 
 import com.benecia.lifetracker.user.service.Friend
 import com.benecia.lifetracker.user.service.FriendStatus
@@ -40,8 +40,8 @@ class FriendEntity(
     val requestAt: ZonedDateTime? = null,
 ) {
     companion object {
-        fun from(friend: Friend): FriendEntity {
-            return FriendEntity(
+        fun from(friend: Friend): com.benecia.lifetracker.db.jpa.user.FriendEntity {
+            return com.benecia.lifetracker.db.jpa.user.FriendEntity(
                 requesterId = friend.requesterId,
                 receiverId = friend.receiverId,
                 status = friend.status,

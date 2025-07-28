@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.todo
+package com.benecia.lifetracker.db.jpa.todo
 
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime

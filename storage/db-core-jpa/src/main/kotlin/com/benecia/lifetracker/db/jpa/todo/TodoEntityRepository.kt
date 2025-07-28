@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.todo
+package com.benecia.lifetracker.db.jpa.todo
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.todocore.exception.TodoErrorCode

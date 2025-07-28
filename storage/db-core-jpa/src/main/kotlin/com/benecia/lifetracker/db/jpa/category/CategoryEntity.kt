@@ -1,6 +1,6 @@
-package com.benecia.lifetracker.db.core.category
+package com.benecia.lifetracker.db.jpa.category
 
-import com.benecia.lifetracker.db.core.BaseEntity
+import com.benecia.lifetracker.db.jpa.BaseEntity
 import com.benecia.lifetracker.todocore.service.Category
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

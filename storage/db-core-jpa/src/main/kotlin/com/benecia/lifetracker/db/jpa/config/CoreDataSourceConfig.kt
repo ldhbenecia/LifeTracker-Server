@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.config
+package com.benecia.lifetracker.db.jpa.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

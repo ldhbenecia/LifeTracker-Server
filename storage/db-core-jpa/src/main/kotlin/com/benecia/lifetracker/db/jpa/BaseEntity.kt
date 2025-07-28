@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core
+package com.benecia.lifetracker.db.jpa
 
 import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.CreationTimestamp

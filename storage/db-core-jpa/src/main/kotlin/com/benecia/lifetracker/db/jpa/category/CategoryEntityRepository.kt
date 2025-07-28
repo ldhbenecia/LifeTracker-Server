@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.category
+package com.benecia.lifetracker.db.jpa.category
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.todocore.exception.CategoryErrorCode

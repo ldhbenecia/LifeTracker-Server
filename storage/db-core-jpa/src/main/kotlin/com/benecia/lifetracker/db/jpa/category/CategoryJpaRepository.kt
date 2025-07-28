@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.db.core.category
+package com.benecia.lifetracker.db.jpa.category
 
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
