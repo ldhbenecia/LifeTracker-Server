@@ -1,0 +1,42 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${MONGO_DATABASE}
+      username: ${MONGO_USER}
+      password: ${MONGO_PASSWORD}
+      authentication-database: admin
+
+---
+spring.config.activate.on-profile: local
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${MONGO_DATABASE}
+      username: ${MONGO_USER}
+      password: ${MONGO_PASSWORD}
+      authentication-database: admin
+
+---
+spring.config.activate.on-profile: dev
+
+spring:
+  data:
+    mongodb:
+      host: mongodb_sent
+      port: 27017
+      database: ${MONGO_DATABASE}
+      username: ${MONGO_USER}
+      password: ${MONGO_PASSWORD}
+      authentication-database: admin
+
+---
+spring.config.activate.on-profile: staging
+
+
+---
+spring.config.activate.on-profile: live
