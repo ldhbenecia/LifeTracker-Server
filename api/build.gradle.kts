@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":core:todo-core"))
     implementation(project(":storage:db-core-jpa"))
     implementation(project(":storage:db-core-mongo"))
+    implementation(project(":chat"))
 
     testImplementation(project(":tests:api-docs"))
 
