@@ -13,12 +13,55 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
       - name: Create application.yml in api module
         run: |
           mkdir -p api/src/main/resources
           echo "${{ secrets.APPLICATION_DEV }}" > api/src/main/resources/application.yml
           echo "✅ application.yml created successfully"
           ls -la api/src/main/resources/
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Generate AsciiDoc documentation
+        run: |
+          echo "📚 Generating AsciiDoc documentation..."
+          ./gradlew asciidoctor
+          echo "✅ AsciiDoc generation completed"
+          
+          # Verify AsciiDoc files were generated
+          if [ -d "api/build/docs/asciidoc" ]; then
+          echo "✅ AsciiDoc files found:"
+          ls -la api/build/docs/asciidoc/
+          else
+          echo "❌ AsciiDoc files not found!"
+          echo "Available build directories:"
+          find . -name "docs" -type d 2>/dev/null || echo "No docs directories found"
+          exit 1
+          fi
+
+          - name: Copy API Docs to static/docs
+            run: |
+              echo "📁 Copying API docs to static resources..."
+              rm -rf api/src/main/resources/static/docs
+              mkdir -p api/src/main/resources/static/docs
+              cp -r api/build/docs/asciidoc/* api/src/main/resources/static/docs/
+              echo "✅ API docs copied successfully"
+              
+              # Verify copied files
+              echo "📄 Copied documentation files:"
+              ls -la api/src/main/resources/static/docs/
+              
+              # Show file tree structure
+              echo "📂 Documentation structure:"
+              find api/src/main/resources/static/docs/ -type f | head -10
 
       - name: Create .env
         run: |
