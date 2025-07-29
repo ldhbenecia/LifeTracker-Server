@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - 'api/src/docs/asciidoc/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 concurrency:
