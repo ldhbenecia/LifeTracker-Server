@@ -49,3 +49,29 @@ include::{snippets}/modifyTodo/request-fields.adoc[]
 include::{snippets}/modifyTodo/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/modifyTodo/response-fields.adoc[]
+
+'''
+
+=== Mark Done
+==== HTTP Request
+include::{snippets}/markDone/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/markDone/path-parameters.adoc[]
+==== Query Parameters
+include::{snippets}/markDone/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/markDone/http-response.adoc[]
+==== Response Fields
+include::{snippets}/markDone/response-fields.adoc[]
+
+'''
+
+=== Remove Todo
+==== HTTP Request
+include::{snippets}/removeTodo/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/removeTodo/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/removeTodo/http-response.adoc[]
+==== Response Fields
+include::{snippets}/removeTodo/response-fields.adoc[]

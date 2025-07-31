@@ -4,35 +4,35 @@
 
 === Get All Categories
 ==== HTTP Request
-include::{snippets}/findAllCategories/http-request.adoc[]
+include::{snippets}/readCategories/http-request.adoc[]
 ==== HTTP Response
-include::{snippets}/findAllCategories/http-response.adoc[]
+include::{snippets}/readCategories/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/findAllCategories/response-fields.adoc[]
+include::{snippets}/readCategories/response-fields.adoc[]
 
 '''
 
 === Get Category by ID
 ==== HTTP Request
-include::{snippets}/findCategoryById/http-request.adoc[]
+include::{snippets}/readCategory/http-request.adoc[]
 ==== Path Parameters
-include::{snippets}/findCategoryById/path-parameters.adoc[]
+include::{snippets}/readCategory/path-parameters.adoc[]
 ==== HTTP Response
-include::{snippets}/findCategoryById/http-response.adoc[]
+include::{snippets}/readCategory/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/findCategoryById/response-fields.adoc[]
+include::{snippets}/readCategory/response-fields.adoc[]
 
 '''
 
 === Get Category by Name
 ==== HTTP Request
-include::{snippets}/findCategoryByName/http-request.adoc[]
+include::{snippets}/getCategoryByName/http-request.adoc[]
 ==== Query Parameters
-include::{snippets}/findCategoryByName/query-parameters.adoc[]
+include::{snippets}/getCategoryByName/query-parameters.adoc[]
 ==== HTTP Response
-include::{snippets}/findCategoryByName/http-response.adoc[]
+include::{snippets}/getCategoryByName/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/findCategoryByName/response-fields.adoc[]
+include::{snippets}/getCategoryByName/response-fields.adoc[]
 
 '''
 
