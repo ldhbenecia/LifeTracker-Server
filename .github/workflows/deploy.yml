@@ -17,13 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
-
       - name: Create application.yml in api module
         run: |
           mkdir -p api/src/main/resources
@@ -35,7 +28,6 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
           echo "✅ .env file created successfully"
-          echo "📄 .env file size: $(wc -c < .env) bytes"
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -50,8 +42,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:${{ github.run_number }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/sent-app:latest
 
       - name: Verify Docker image push
         run: |
@@ -68,46 +60,14 @@ jobs:
             mkdir -p /home/sentthoughts/Sent-Server
             echo "📁 Server directory prepared"
 
-      - name: Copy files to server
+      - name: Copy all files to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: ".env,docker-compose.yml,nginx"
+          source: .
           target: /home/sentthoughts/Sent-Server/
-
-      - name: Verify files copied to server
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            echo "📁 Checking files in /home/sentthoughts/Sent-Server/"
-            ls -la /home/sentthoughts/Sent-Server/
-            echo ""
-            echo "📄 Checking .env file:"
-            if [ -f "/home/sentthoughts/Sent-Server/.env" ]; then
-              echo "✅ .env file exists ($(wc -c < /home/sentthoughts/Sent-Server/.env) bytes)"
-            else
-              echo "❌ .env file not found!"
-            fi
-            echo ""
-            echo "📄 Checking docker-compose.yml:"
-            if [ -f "/home/sentthoughts/Sent-Server/docker-compose.yml" ]; then
-              echo "✅ docker-compose.yml exists"
-            else
-              echo "❌ docker-compose.yml not found!"
-            fi
-            echo ""
-            echo "📁 Checking nginx directory:"
-            if [ -d "/home/sentthoughts/Sent-Server/nginx" ]; then
-              echo "✅ nginx directory exists"
-              ls -la /home/sentthoughts/Sent-Server/nginx/
-            else
-              echo "❌ nginx directory not found!"
-            fi
 
       - name: Setup SSL certificates
         uses: appleboy/ssh-action@v0.1.7
@@ -117,22 +77,10 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/sentthoughts/Sent-Server
-            echo "🔐 Setting up SSL certificates..."
-            
-            # Create certs directory if it doesn't exist
             if [ ! -d "certs" ]; then
-              echo "📁 Creating certs directory..."
               ln -s /home/ubuntu/certs/devcerts ./certs
-              echo "✅ SSL certificates linked successfully"
-            else
-              echo "✅ SSL certificates already configured"
             fi
-            
-            # Verify certificates
-            if [ -f "certs/fullchain.pem" ] && [ -f "certs/privkey.pem" ]; then
-              echo "✅ SSL certificates verified"
-              ls -la certs/
-            else
+            if [ ! -f "certs/fullchain.pem" ] || [ ! -f "certs/privkey.pem" ]; then
               echo "❌ SSL certificates not found!"
               exit 1
             fi
