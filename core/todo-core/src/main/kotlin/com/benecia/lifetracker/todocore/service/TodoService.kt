@@ -30,4 +30,12 @@ class TodoService(
     fun modifyTodo(userId: UUID, id: Long, command: ModifyTodo): Long {
         return todoWriter.modify(userId, id, command)
     }
+
+    fun markDone(userId: UUID, id: Long, done: Boolean): Long {
+        return todoWriter.markDone(userId, id, done)
+    }
+
+    fun removeTodo(userId: UUID, id: Long): Long {
+        return todoWriter.remove(userId, id)
+    }
 }

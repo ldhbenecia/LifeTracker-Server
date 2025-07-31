@@ -4,7 +4,7 @@ import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.UUID
 
 @Component
@@ -21,6 +21,7 @@ data class TodoReader(
             title = todo.title,
             category = category,
             scheduledDate = todo.scheduledDate,
+            scheduledTime = todo.scheduledTime,
             notificationTime = todo.notificationTime,
             isDone = todo.isDone,
         )
@@ -31,8 +32,8 @@ data class TodoReader(
         year: Int,
         month: Int,
     ): List<TodoInfo> {
-        val start = LocalDateTime.of(year, month, 1, 0, 0)
-        val end = start.withDayOfMonth(start.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59)
+        val start = LocalDate.of(year, month, 1)
+        val end = start.withDayOfMonth(start.lengthOfMonth())
 
         val todos = todoRepository.findByUserIdAndScheduledDateRange(userId, start, end)
         val categoryIds = todos.map { it.categoryId }.distinct()
@@ -47,6 +48,7 @@ data class TodoReader(
                 title = todo.title,
                 category = category,
                 scheduledDate = todo.scheduledDate,
+                scheduledTime = todo.scheduledTime,
                 notificationTime = todo.notificationTime,
                 isDone = todo.isDone,
             )

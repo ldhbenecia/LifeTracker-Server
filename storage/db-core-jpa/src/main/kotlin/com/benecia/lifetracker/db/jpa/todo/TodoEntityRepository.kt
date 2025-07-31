@@ -7,7 +7,7 @@ import com.benecia.lifetracker.todocore.service.TodoRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.UUID
 
 @Repository
@@ -23,8 +23,8 @@ class TodoEntityRepository(
 
     override fun findByUserIdAndScheduledDateRange(
         userId: UUID,
-        start: LocalDateTime,
-        end: LocalDateTime,
+        start: LocalDate,
+        end: LocalDate,
     ): List<Todo> {
         val entities = todoJpaRepository.findByUserIdAndScheduledDateBetween(userId, start, end)
         return entities.map { it.toDomain() }
@@ -43,9 +43,18 @@ class TodoEntityRepository(
         entity.title = todo.title
         entity.categoryId = todo.categoryId
         entity.scheduledDate = todo.scheduledDate
+        entity.scheduledTime = todo.scheduledTime
         entity.notificationTime = todo.notificationTime
         entity.isDone = todo.isDone
+        entity.status = todo.status
 
+        return todoJpaRepository.save(entity).id!!
+    }
+
+    override fun remove(id: Long): Long {
+        val entity = todoJpaRepository.findByIdOrNull(id)
+            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
+        entity.remove()
         return todoJpaRepository.save(entity).id!!
     }
 }

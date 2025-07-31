@@ -19,8 +19,10 @@ data class TodoWriter(
             title = command.title,
             categoryId = category.id,
             scheduledDate = command.scheduledDate,
+            scheduledTime = command.scheduledTime,
             notificationTime = command.notificationTime,
             isDone = false,
+            status = TodoStatus.ACTIVE,
         )
 
         return todoRepository.add(todo)
@@ -40,10 +42,34 @@ data class TodoWriter(
             title = command.title ?: existingTodo.title,
             categoryId = newCategoryId,
             scheduledDate = command.scheduledDate ?: existingTodo.scheduledDate,
+            scheduledTime = command.scheduledTime ?: existingTodo.scheduledTime,
             notificationTime = command.notificationTime ?: existingTodo.notificationTime,
             isDone = command.isDone ?: existingTodo.isDone,
+            status = TodoStatus.ACTIVE,
         )
 
         return todoRepository.modify(id, modifiedTodo)
+    }
+
+    fun markDone(userId: UUID, id: Long, done: Boolean): Long {
+        val existingTodoInfo = todoReader.findById(userId, id)
+
+        val updatedTodo = Todo(
+            id = id,
+            userId = userId,
+            title = existingTodoInfo.title,
+            categoryId = existingTodoInfo.category.id,
+            scheduledDate = existingTodoInfo.scheduledDate,
+            scheduledTime = existingTodoInfo.scheduledTime,
+            notificationTime = existingTodoInfo.notificationTime,
+            isDone = done,
+            status = TodoStatus.ACTIVE,
+        )
+
+        return todoRepository.modify(id, updatedTodo)
+    }
+
+    fun remove(userId: UUID, id: Long): Long {
+        return todoRepository.remove(id)
     }
 }

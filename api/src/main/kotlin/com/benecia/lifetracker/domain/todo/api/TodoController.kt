@@ -1,6 +1,7 @@
 package com.benecia.lifetracker.domain.todo.api
 
 import com.benecia.lifetracker.common.response.ApiResponse
+import com.benecia.lifetracker.domain.todo.dto.DeleteTodoResponse
 import com.benecia.lifetracker.domain.todo.dto.ModifyTodoRequest
 import com.benecia.lifetracker.domain.todo.dto.ModifyTodoResponse
 import com.benecia.lifetracker.domain.todo.dto.NewTodoRequest
@@ -9,6 +10,7 @@ import com.benecia.lifetracker.domain.todo.dto.TodoResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.todocore.service.TodoService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -60,5 +62,24 @@ class TodoController(
     ): ApiResponse<ModifyTodoResponse> {
         val todoId = todoService.modifyTodo(loginUser.id, id, request.toModifyTodo())
         return ApiResponse.success(ModifyTodoResponse(todoId))
+    }
+
+    @PatchMapping("/{id}/done")
+    fun markDone(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable id: Long,
+        @RequestParam done: Boolean,
+    ): ApiResponse<ModifyTodoResponse> {
+        val todoId = todoService.markDone(loginUser.id, id, done)
+        return ApiResponse.success(ModifyTodoResponse(todoId))
+    }
+
+    @DeleteMapping("/{id}")
+    fun removeTodo(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable id: Long,
+    ): ApiResponse<DeleteTodoResponse> {
+        val todoId = todoService.removeTodo(loginUser.id, id)
+        return ApiResponse.success(DeleteTodoResponse(todoId))
     }
 }
