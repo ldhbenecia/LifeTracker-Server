@@ -22,7 +22,7 @@ interface ChatRoomJpaRepository : JpaRepository<ChatRoomEntity, Long> {
             u.id, u.displayName, u.profileImageUrl
         )
         FROM ChatRoomEntity r
-        JOIN ChatRoomUserEntity cu1 ON r.id = cu1.id.roomId AND cu1.id.userId = :userId
+        JOIN ChatRoomUserEntity cu1 ON r.id = cu1.id.roomId AND cu1.id.userId = :userId AND cu1.visible = true
         JOIN ChatRoomUserEntity cu2 ON r.id = cu2.id.roomId AND cu2.id.userId != :userId
         JOIN UserEntity u ON cu2.id.userId = u.id
         ORDER BY r.lastMessageTime DESC
