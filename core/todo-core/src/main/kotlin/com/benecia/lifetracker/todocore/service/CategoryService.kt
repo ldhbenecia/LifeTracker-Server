@@ -34,4 +34,8 @@ class CategoryService(
     fun modify(userId: UUID, id: Long, command: ModifyCategory): Long {
         return categoryWriter.modify(userId, id, command)
     }
+
+    fun remove(userId: UUID, id: Long): Long {
+        return categoryWriter.remove(userId, id)
+    }
 }

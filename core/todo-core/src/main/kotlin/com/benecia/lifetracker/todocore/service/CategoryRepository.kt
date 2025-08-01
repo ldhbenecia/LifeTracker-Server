@@ -12,4 +12,5 @@ interface CategoryRepository {
     fun existsByUserIdAndName(userId: UUID, name: String): Boolean
     fun add(category: Category): Long
     fun modify(id: Long, category: Category): Long
+    fun remove(id: Long): Long
 }

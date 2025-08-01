@@ -47,4 +47,8 @@ data class CategoryWriter(
 
         return categoryRepository.modify(id, updatedCategory)
     }
+
+    fun remove(userId: UUID, id: Long): Long {
+        return categoryRepository.remove(id)
+    }
 }

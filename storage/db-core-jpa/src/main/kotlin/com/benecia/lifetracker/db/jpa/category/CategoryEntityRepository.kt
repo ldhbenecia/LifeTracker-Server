@@ -56,4 +56,11 @@ class CategoryEntityRepository(
         return categoryJpaRepository.save(entity).id
             ?: throw CoreException(CategoryErrorCode.CATEGORY_PERSIST_FAILED)
     }
+
+    override fun remove(id: Long): Long {
+        val entity = categoryJpaRepository.findByIdOrNull(id)
+            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+        categoryJpaRepository.delete(entity)
+        return id
+    }
 }

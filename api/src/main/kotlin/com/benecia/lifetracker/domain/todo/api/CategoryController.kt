@@ -4,11 +4,13 @@ import com.benecia.lifetracker.common.response.ApiResponse
 import com.benecia.lifetracker.domain.todo.dto.AddCategoryRequest
 import com.benecia.lifetracker.domain.todo.dto.AddCategoryResponse
 import com.benecia.lifetracker.domain.todo.dto.CategoryResponse
+import com.benecia.lifetracker.domain.todo.dto.DeleteCategoryResponse
 import com.benecia.lifetracker.domain.todo.dto.ModifyCategoryRequest
 import com.benecia.lifetracker.domain.todo.dto.ModifyCategoryResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.todocore.service.CategoryService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -67,5 +69,14 @@ class CategoryController(
     ): ApiResponse<ModifyCategoryResponse> {
         val categoryId = categoryService.modify(loginUser.id, id, command.toModifyCategory())
         return ApiResponse.success(ModifyCategoryResponse(categoryId))
+    }
+
+    @DeleteMapping("/{id}")
+    fun removeCategory(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable id: Long,
+    ): ApiResponse<DeleteCategoryResponse> {
+        val removedId = categoryService.remove(loginUser.id, id)
+        return ApiResponse.success(DeleteCategoryResponse(removedId))
     }
 }
