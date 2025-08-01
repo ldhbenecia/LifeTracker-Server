@@ -6,8 +6,8 @@ import java.util.UUID
 @Repository
 interface ChatRoomRepository {
     fun findAllRoomsByUserId(userId: UUID): List<ChatRoom>
-    fun findOpponentUserId(userId: UUID, roomId: Long): UUID
-    fun createRoom(userId: UUID, opponentUserId: UUID): String
-    fun leaveRoom(userId: UUID, roomId: Long)
-    fun setNotification(userId: UUID, roomId: Long, enabled: Boolean)
+    fun findRoomsWithOpponents(userId: UUID): List<ChatRoomWithOpponent>
+    fun createRoom(userId: UUID, opponentUserId: UUID): Long
+    fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long
+    fun hideRoomForUser(userId: UUID, roomId: Long): Long
 }

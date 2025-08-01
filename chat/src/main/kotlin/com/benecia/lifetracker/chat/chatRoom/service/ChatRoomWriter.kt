@@ -12,11 +12,11 @@ class ChatRoomWriter(
         return chatRoomRepository.createRoom(myUserId, opponentUserId)
     }
 
-    fun leaveRoom(userId: UUID, roomId: String): Long {
-        return chatRoomRepository.leaveRoom(userId, roomId)
+    fun hideRoom(userId: UUID, roomId: Long): Long {
+        return chatRoomRepository.hideRoomForUser(userId, roomId)
     }
 
-    fun setNotification(userId: UUID, roomId: String, enabled: Boolean): Long {
+    fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {
         return chatRoomRepository.setNotification(userId, roomId, enabled)
     }
 }
