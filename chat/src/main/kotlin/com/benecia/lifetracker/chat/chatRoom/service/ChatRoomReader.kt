@@ -7,7 +7,7 @@ import java.util.UUID
 
 @Component
 class ChatRoomReader(
-    private val chatRoomRepository: ChatRoomRepository
+    private val chatRoomRepository: ChatRoomRepository,
 ) {
 
     fun readRooms(userId: UUID): List<ChatRoomSummary> {
@@ -21,8 +21,8 @@ class ChatRoomReader(
                 opponent = UserSummary(
                     userId = room.opponentUserId,
                     userName = room.opponentUserName,
-                    userProfileImageUrl = room.opponentProfileImageUrl
-                )
+                    userProfileImageUrl = room.opponentProfileImageUrl,
+                ),
             )
         }
     }

@@ -2,7 +2,6 @@ package com.benecia.lifetracker.db.jpa.chat
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
-import jakarta.persistence.Embedded
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
@@ -23,7 +22,7 @@ class ChatRoomUserEntity(
     var notificationEnabled: Boolean = true,
 
     @Column(name = "visible")
-    var visible: Boolean = true
+    var visible: Boolean = true,
 )
 
 @Embeddable
@@ -33,5 +32,5 @@ class ChatRoomUserId(
     val roomId: Long,
 
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
-    val userId: UUID
+    val userId: UUID,
 ) : Serializable

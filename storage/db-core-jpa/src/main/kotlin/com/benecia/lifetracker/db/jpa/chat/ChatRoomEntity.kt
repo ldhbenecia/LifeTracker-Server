@@ -18,6 +18,6 @@ class ChatRoomEntity(
 
     var lastMessage: String? = null,
 
-    var lastMessageTime: LocalDateTime? = null
+    var lastMessageTime: LocalDateTime? = null,
 
-): BaseEntity()
+) : BaseEntity()

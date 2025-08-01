@@ -9,5 +9,5 @@ data class ChatRoomWithOpponent(
     val lastMessageTime: LocalDateTime?,
     val opponentUserId: UUID,
     val opponentUserName: String,
-    val opponentProfileImageUrl: String?
+    val opponentProfileImageUrl: String?,
 )

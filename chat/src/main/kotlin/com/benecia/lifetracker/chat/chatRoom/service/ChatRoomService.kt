@@ -7,7 +7,7 @@ import java.util.UUID
 @Service
 class ChatRoomService(
     private val chatRoomReader: ChatRoomReader,
-    private val chatRoomWriter: ChatRoomWriter
+    private val chatRoomWriter: ChatRoomWriter,
 ) {
 
     fun readRooms(userId: UUID): List<ChatRoomSummary> {
@@ -25,5 +25,4 @@ class ChatRoomService(
     fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {
         return chatRoomWriter.setNotification(userId, roomId, enabled)
     }
-
 }

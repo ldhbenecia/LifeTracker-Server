@@ -8,15 +8,18 @@ import java.util.UUID
 
 interface ChatRoomJpaRepository : JpaRepository<ChatRoomEntity, Long> {
 
-    @Query("""
+    @Query(
+        """
         SELECT r FROM ChatRoomEntity r
         JOIN ChatRoomUserEntity cu ON r.id = cu.id.roomId
         WHERE cu.id.userId = :userId AND cu.visible = true
         ORDER BY r.lastMessageTime DESC
-    """)
+    """,
+    )
     fun findAllRoomsByUserId(@Param("userId") userId: UUID): List<ChatRoomEntity>
 
-    @Query("""
+    @Query(
+        """
         SELECT new com.benecia.lifetracker.chat.chatRoom.service.ChatRoomWithOpponent(
             r.id, r.lastMessage, r.lastMessageTime,
             u.id, u.displayName, u.profileImageUrl
@@ -26,6 +29,7 @@ interface ChatRoomJpaRepository : JpaRepository<ChatRoomEntity, Long> {
         JOIN ChatRoomUserEntity cu2 ON r.id = cu2.id.roomId AND cu2.id.userId != :userId
         JOIN UserEntity u ON cu2.id.userId = u.id
         ORDER BY r.lastMessageTime DESC
-    """)
+    """,
+    )
     fun findRoomsWithOpponents(@Param("userId") userId: UUID): List<ChatRoomWithOpponent>
 }

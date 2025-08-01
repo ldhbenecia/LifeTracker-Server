@@ -7,12 +7,14 @@ import java.util.UUID
 
 interface ChatRoomUserJpaRepository : JpaRepository<ChatRoomUserEntity, ChatRoomUserId> {
 
-    @Query("""
+    @Query(
+        """
         SELECT cu.id.roomId
         FROM ChatRoomUserEntity cu
         WHERE cu.id.userId IN (:userId1, :userId2)
         GROUP BY cu.id.roomId
         HAVING COUNT(cu.id.userId) = 2
-    """)
+    """,
+    )
     fun findRoomIdByUserIds(@Param("userId1") userId1: UUID, @Param("userId2") userId2: UUID): Long?
 }

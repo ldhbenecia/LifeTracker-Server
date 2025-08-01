@@ -5,5 +5,5 @@ import java.time.LocalDateTime
 data class ChatRoom(
     val id: Long? = null,
     val lastMessage: String?,
-    val lastMessageTime: LocalDateTime?
+    val lastMessageTime: LocalDateTime?,
 )

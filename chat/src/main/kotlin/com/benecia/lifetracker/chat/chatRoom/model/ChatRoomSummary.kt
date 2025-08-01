@@ -6,5 +6,5 @@ data class ChatRoomSummary(
     val roomId: Long,
     val lastMessage: String?,
     val lastMessageTime: LocalDateTime?,
-    val opponent: UserSummary
+    val opponent: UserSummary,
 )

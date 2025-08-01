@@ -5,7 +5,6 @@ import com.benecia.lifetracker.chat.chatRoom.service.ChatRoom
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomRepository
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomWithOpponent
 import com.benecia.lifetracker.common.exception.CoreException
-import com.benecia.lifetracker.common.exception.ErrorCode
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -13,7 +12,7 @@ import java.util.UUID
 @Repository
 class ChatRoomEntityRepository(
     private val chatRoomJpaRepository: ChatRoomJpaRepository,
-    private val chatRoomUserJpaRepository: ChatRoomUserJpaRepository
+    private val chatRoomUserJpaRepository: ChatRoomUserJpaRepository,
 ) : ChatRoomRepository {
 
     override fun findAllRoomsByUserId(userId: UUID): List<ChatRoom> {
@@ -22,7 +21,7 @@ class ChatRoomEntityRepository(
                 ChatRoom(
                     id = entity.id,
                     lastMessage = entity.lastMessage,
-                    lastMessageTime = entity.lastMessageTime
+                    lastMessageTime = entity.lastMessageTime,
                 )
             }
     }
@@ -42,10 +41,10 @@ class ChatRoomEntityRepository(
         chatRoomJpaRepository.save(chatRoom)
 
         val user1 = ChatRoomUserEntity(
-            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = userId)
+            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = userId),
         )
         val user2 = ChatRoomUserEntity(
-            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = opponentUserId)
+            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = opponentUserId),
         )
         chatRoomUserJpaRepository.saveAll(listOf(user1, user2))
 
