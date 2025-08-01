@@ -17,8 +17,8 @@ services:
       - sent_net
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
-      interval: 5s
-      timeout: 5s
+      interval: 10s
+      timeout: 10s
       retries: 10
 
   mongodb:
@@ -81,6 +81,7 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+    restart: always
 
   nginx:
     image: nginx:latest
