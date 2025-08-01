@@ -238,4 +238,36 @@ class CategoryControllerTest : RestDocsTest() {
                 ),
             )
     }
+
+    @Test
+    fun removeCategory() {
+        val userId = UUID.randomUUID()
+        val loginUser = LoginUser(userId, "test@test.com")
+
+        setupAuthentication(loginUser)
+
+        every { categoryService.remove(userId, 1L) } returns 1L
+
+        given()
+            .contentType(ContentType.JSON)
+            .delete("/api/v1/categories/{id}", 1L)
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "removeCategory",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    pathParameters(
+                        parameterWithName("id").description("카테고리 ID"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("삭제된 카테고리 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+    }
 }
