@@ -6,6 +6,7 @@ allOpen {
 
 dependencies {
     implementation(project(":common"))
+    compileOnly(project(":chat"))
     compileOnly(project(":core:user-core"))
     compileOnly(project(":core:todo-core"))
 
