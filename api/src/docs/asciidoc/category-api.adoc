@@ -59,3 +59,17 @@ include::{snippets}/modifyCategory/request-fields.adoc[]
 include::{snippets}/modifyCategory/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/modifyCategory/response-fields.adoc[]
+
+'''
+
+=== Remove Category
+==== HTTP Request
+include::{snippets}/removeCategory/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/removeCategory/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/removeCategory/http-response.adoc[]
+==== Response Fields
+include::{snippets}/removeCategory/response-fields.adoc[]
+
+'''
