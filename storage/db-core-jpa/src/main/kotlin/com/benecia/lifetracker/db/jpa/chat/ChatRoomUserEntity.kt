@@ -20,7 +20,10 @@ class ChatRoomUserEntity(
     val joinedAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "notification_enabled")
-    var notificationEnabled: Boolean = true
+    var notificationEnabled: Boolean = true,
+
+    @Column(name = "visible")
+    var visible: Boolean = true
 )
 
 @Embeddable
