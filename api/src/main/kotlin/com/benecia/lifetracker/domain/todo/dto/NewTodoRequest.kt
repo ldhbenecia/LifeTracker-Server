@@ -9,7 +9,7 @@ data class NewTodoRequest(
     val title: String,
     val category: String,
     val scheduledDate: LocalDate,
-    val scheduledTime: LocalTime,
+    val scheduledTime: LocalTime? = null,
     val notificationTime: LocalDateTime? = null,
 ) {
     fun toNewTodo(): NewTodo {
