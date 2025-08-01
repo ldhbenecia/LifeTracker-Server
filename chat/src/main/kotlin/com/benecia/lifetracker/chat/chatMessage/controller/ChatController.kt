@@ -1,7 +1,7 @@
-package com.benecia.lifetracker.chat.controller
+package com.benecia.lifetracker.chat.chatMessage.controller
 
-import com.benecia.lifetracker.chat.dto.ChatMessage
-import com.benecia.lifetracker.chat.service.ChatMessageProducer
+import com.benecia.lifetracker.chat.chatMessage.service.ChatMessage
+import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageProducer
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
