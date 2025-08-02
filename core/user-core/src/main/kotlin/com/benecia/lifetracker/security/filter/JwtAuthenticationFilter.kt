@@ -5,6 +5,7 @@ import com.benecia.lifetracker.util.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -16,6 +17,8 @@ class JwtAuthenticationFilter(
     private val jwtUtil: JwtUtil,
     private val userDetailsService: LoginUserDetailsService,
 ) : OncePerRequestFilter() {
+
+    private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -47,7 +50,15 @@ class JwtAuthenticationFilter(
                 }
             }
         } catch (exception: Exception) {
-            logger.warn("JWT 인증 실패: ${exception.message}")
+            log.warn(
+                "Unauthorized request due to JWT error: {} | Request: {} {} | IP: {} | User-Agent: {} | Auth: {}",
+                exception.message,
+                request.method,
+                request.requestURI,
+                request.remoteAddr,
+                request.getHeader("User-Agent"),
+                authHeader,
+            )
         }
 
         filterChain.doFilter(request, response)
