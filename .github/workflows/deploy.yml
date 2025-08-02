@@ -166,9 +166,9 @@ jobs:
               # 3회마다 최근 로그 출력
               if (( $i % 3 == 0 )); then
                 echo "📝 [Attempt $i] Recent backend logs:"
-                docker-compose logs --tail 10 sent_server 2>/dev/null || echo "⚠️ Unable to get backend logs"
+                docker-compose logs --tail 10 sent-server 2>/dev/null || echo "⚠️ Unable to get backend logs"
                 echo "📝 [Attempt $i] Recent nginx logs:"
-                docker-compose logs --tail 10 nginx_proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
+                docker-compose logs --tail 10 nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
               fi
 
               sleep $SLEEP_SEC
@@ -176,9 +176,9 @@ jobs:
 
             echo "❌ Health check failed after $MAX_ATTEMPTS attempts!"
             echo "🔍 Final backend logs:"
-            docker-compose logs --tail 30 sent_server 2>/dev/null || echo "⚠️ Unable to get backend logs"
+            docker-compose logs --tail 30 sent-server 2>/dev/null || echo "⚠️ Unable to get backend logs"
             echo "🔍 Final nginx logs:"
-            docker-compose logs --tail 30 nginx_proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
+            docker-compose logs --tail 30 nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
             echo "🔍 Service status:"
             docker-compose ps 2>/dev/null || echo "⚠️ Unable to get docker-compose status"
             exit 1
