@@ -27,7 +27,7 @@ spring.config.activate.on-profile: dev
 spring:
   data:
     mongodb:
-      host: mongodb_sent
+      host: mongodb-sent
       port: 27017
       database: ${MONGO_DATABASE}
       username: ${MONGO_USER}
