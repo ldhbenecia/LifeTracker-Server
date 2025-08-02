@@ -8,6 +8,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     restart: unless-stopped
+    networks:
+      - sent-server_sent_net
 
   grafana:
     container_name: sent_grafana
@@ -19,7 +21,13 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
+    networks:
+      - sent-server_sent_net
 
 volumes:
   prometheus_data:
   grafana-data:
+
+networks:
+  sent-server_sent_net:
+    external: true
