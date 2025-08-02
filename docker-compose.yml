@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql_sent
+    container_name: mysql-sent
     env_file:
       - ./.env
     environment:
@@ -14,7 +14,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - sent_net
+      - sent-net
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
       interval: 10s
@@ -23,7 +23,7 @@ services:
 
   mongodb:
     image: mongo:6.0
-    container_name: mongodb_sent
+    container_name: mongodb-sent
     env_file:
       - ./.env
     environment:
@@ -35,7 +35,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - sent_net
+      - sent-net
     healthcheck:
       test: ["CMD", "mongosh", "-u", "${MONGO_USER}", "-p", "${MONGO_PASSWORD}", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -44,7 +44,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: rabbitmq_sent
+    container_name: rabbitmq-sent
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -54,18 +54,18 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - sent_net
+      - sent-net
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  sent_server:
+  sent-server:
     image: ldhbenecia/sent-app:latest
-    container_name: sent_server
+    container_name: sent-server
     env_file:
       - ./.env
     environment:
@@ -73,7 +73,7 @@ services:
     expose:
       - "8080"
     networks:
-      - sent_net
+      - sent-net
     depends_on:
       mysql:
         condition: service_healthy
@@ -85,7 +85,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx_proxy
+    container_name: nginx-proxy
     ports:
       - "80:80"
       - "443:443"
@@ -96,15 +96,15 @@ services:
       - /home/ubuntu/certs/devcerts:/etc/certs:ro
     command: /bin/sh -c "envsubst '$${DOMAIN_NAME} $${BACKEND_SERVICE} $${BACKEND_PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     depends_on:
-      - sent_server
+      - sent-server
     networks:
-      - sent_net
+      - sent-net
 
 volumes:
   mysql_data:
-  rabbitmq-data:
+  rabbitmq_data:
   mongodb_data:
 
 networks:
-  sent_net:
+  sent-net:
     driver: bridge
