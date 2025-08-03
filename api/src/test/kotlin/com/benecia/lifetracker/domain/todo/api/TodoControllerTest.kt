@@ -53,10 +53,9 @@ class TodoControllerTest : RestDocsTest() {
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
 
-        setupAuthentication(loginUser)
-
         val todoId = 1L
 
+        // 카테고리 있는 경우
         val categoryInfo = CategoryInfo(
             id = 1L,
             name = "개발",
@@ -76,6 +75,7 @@ class TodoControllerTest : RestDocsTest() {
 
         every { todoService.findTodoById(userId, todoId) } returns expected
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
             .get("/api/v1/todos/{id}", todoId)
@@ -83,7 +83,7 @@ class TodoControllerTest : RestDocsTest() {
             .status(HttpStatus.OK)
             .apply(
                 document(
-                    "findTodo",
+                    "findTodo_withCategory",
                     requestPreprocessor(),
                     responsePreprocessor(),
                     pathParameters(
@@ -94,10 +94,56 @@ class TodoControllerTest : RestDocsTest() {
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("할 일 ID"),
                         fieldWithPath("data.title").type(JsonFieldType.STRING).description("할 일 제목"),
-                        fieldWithPath("data.category.id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
-                        fieldWithPath("data.category.name").type(JsonFieldType.STRING).description("카테고리 이름"),
-                        fieldWithPath("data.category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘"),
-                        fieldWithPath("data.category.color").type(JsonFieldType.STRING).description("카테고리 색상"),
+                        fieldWithPath("data.category").type(JsonFieldType.OBJECT).description("카테고리 정보, 없을 수 있음").optional(),
+                        fieldWithPath("data.category.id").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("data.category.name").type(JsonFieldType.STRING).description("카테고리 이름").optional(),
+                        fieldWithPath("data.category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘").optional(),
+                        fieldWithPath("data.category.color").type(JsonFieldType.STRING).description("카테고리 색상").optional(),
+                        fieldWithPath("data.scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
+                        fieldWithPath("data.scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
+                        fieldWithPath("data.notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
+                        fieldWithPath("data.isDone").type(JsonFieldType.BOOLEAN).description("완료 여부"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+
+        // 카테고리 없는 경우
+        val expectedNoCategory = TodoInfo(
+            id = todoId + 1,
+            title = "서버 개발",
+            category = null,
+            scheduledDate = LocalDate.of(2025, 7, 8),
+            scheduledTime = LocalTime.of(20, 0),
+            notificationTime = LocalDateTime.of(2025, 7, 8, 18, 0),
+            isDone = false,
+        )
+        every { todoService.findTodoById(userId, todoId + 1) } returns expectedNoCategory
+
+        setupAuthentication(loginUser)
+        given()
+            .contentType(ContentType.JSON)
+            .get("/api/v1/todos/{id}", todoId + 1)
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "findTodo_noCategory",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    pathParameters(
+                        parameterWithName("id").description("Todo ID"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("할 일 ID"),
+                        fieldWithPath("data.title").type(JsonFieldType.STRING).description("할 일 제목"),
+                        fieldWithPath("data.category").type(JsonFieldType.OBJECT).description("카테고리 정보, 없을 수 있음").optional(),
+                        fieldWithPath("data.category.id").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("data.category.name").type(JsonFieldType.STRING).description("카테고리 이름").optional(),
+                        fieldWithPath("data.category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘").optional(),
+                        fieldWithPath("data.category.color").type(JsonFieldType.STRING).description("카테고리 색상").optional(),
                         fieldWithPath("data.scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
                         fieldWithPath("data.scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
                         fieldWithPath("data.notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
@@ -114,15 +160,15 @@ class TodoControllerTest : RestDocsTest() {
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
 
-        setupAuthentication(loginUser)
-
+        // 카테고리 있는 투두
         val categoryInfo = CategoryInfo(
             id = 1L,
             name = "개발",
             icon = "icon-dev",
             color = "#FF0000",
         )
-        val todoList = listOf(
+
+        val todoListWithCategory = listOf(
             TodoInfo(
                 id = 1L,
                 title = "서버 개발",
@@ -134,8 +180,9 @@ class TodoControllerTest : RestDocsTest() {
             ),
         )
 
-        every { todoService.findTodosByMonth(userId, 2025, 7) } returns todoList
+        every { todoService.findTodosByMonth(userId, 2025, 7) } returns todoListWithCategory
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
             .queryParam("year", 2025)
@@ -145,7 +192,7 @@ class TodoControllerTest : RestDocsTest() {
             .status(HttpStatus.OK)
             .apply(
                 document(
-                    "findTodosByMonth",
+                    "findTodosByMonth_withCategory",
                     requestPreprocessor(),
                     responsePreprocessor(),
                     queryParameters(
@@ -157,10 +204,61 @@ class TodoControllerTest : RestDocsTest() {
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("할 일 ID"),
                         fieldWithPath("data[].title").type(JsonFieldType.STRING).description("할 일 제목"),
-                        fieldWithPath("data[].category.id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
-                        fieldWithPath("data[].category.name").type(JsonFieldType.STRING).description("카테고리 이름"),
-                        fieldWithPath("data[].category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘"),
-                        fieldWithPath("data[].category.color").type(JsonFieldType.STRING).description("카테고리 색상"),
+                        fieldWithPath("data[].category").type(JsonFieldType.OBJECT).description("카테고리 정보, 없을 수 있음").optional(),
+                        fieldWithPath("data[].category.id").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("data[].category.name").type(JsonFieldType.STRING).description("카테고리 이름").optional(),
+                        fieldWithPath("data[].category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘").optional(),
+                        fieldWithPath("data[].category.color").type(JsonFieldType.STRING).description("카테고리 색상").optional(),
+                        fieldWithPath("data[].scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
+                        fieldWithPath("data[].scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
+                        fieldWithPath("data[].notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
+                        fieldWithPath("data[].isDone").type(JsonFieldType.BOOLEAN).description("완료 여부"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+
+        // 카테고리 없는 투두
+        val todoListNoCategory = listOf(
+            TodoInfo(
+                id = 2L,
+                title = "운동하기",
+                category = null,
+                scheduledDate = LocalDate.of(2025, 7, 9),
+                scheduledTime = LocalTime.of(10, 0),
+                notificationTime = LocalDateTime.of(2025, 7, 9, 8, 0),
+                isDone = false,
+            ),
+        )
+        every { todoService.findTodosByMonth(userId, 2025, 8) } returns todoListNoCategory
+
+        setupAuthentication(loginUser)
+        given()
+            .contentType(ContentType.JSON)
+            .queryParam("year", 2025)
+            .queryParam("month", 8)
+            .get("/api/v1/todos/month")
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "findTodosByMonth_noCategory",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    queryParameters(
+                        parameterWithName("year").description("조회 연도"),
+                        parameterWithName("month").description("조회 월"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("할 일 ID"),
+                        fieldWithPath("data[].title").type(JsonFieldType.STRING).description("할 일 제목"),
+                        fieldWithPath("data[].category").type(JsonFieldType.OBJECT).description("카테고리 정보, 없을 수 있음").optional(),
+                        fieldWithPath("data[].category.id").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("data[].category.name").type(JsonFieldType.STRING).description("카테고리 이름").optional(),
+                        fieldWithPath("data[].category.icon").type(JsonFieldType.STRING).description("카테고리 아이콘").optional(),
+                        fieldWithPath("data[].category.color").type(JsonFieldType.STRING).description("카테고리 색상").optional(),
                         fieldWithPath("data[].scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
                         fieldWithPath("data[].scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
                         fieldWithPath("data[].notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
@@ -178,32 +276,70 @@ class TodoControllerTest : RestDocsTest() {
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
 
-        setupAuthentication(loginUser)
-
         every { todoService.addTodo(userId, capture(commandSlot)) } returns 1L
 
-        val requestBody = mapOf(
+        // 카테고리 없는 경우
+        val requestBodyNoCategory = mapOf(
             "title" to "서버 개발",
-            "category" to "개발",
+            "categoryId" to null,
             "scheduledDate" to "2025-07-08",
             "scheduledTime" to "21:00:00",
             "notificationTime" to "2025-07-08T18:00:00",
         )
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
-            .body(requestBody)
+            .body(requestBodyNoCategory)
             .post("/api/v1/todos")
             .then()
             .status(HttpStatus.CREATED)
             .apply(
                 document(
-                    "addTodo",
+                    "addTodo_noCategory",
                     requestPreprocessor(),
                     responsePreprocessor(),
                     requestFields(
                         fieldWithPath("title").type(JsonFieldType.STRING).description("Todo 제목"),
-                        fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리"),
+                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
+                        fieldWithPath("scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
+                        fieldWithPath("notificationTime").type(JsonFieldType.STRING)
+                            .description("알림 시간 (ISO8601), null 가능").optional(),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("생성된 할 일 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+
+        // 카테고리 있는 경우
+        val requestBodyWithCategory = mapOf(
+            "title" to "서버 개발",
+            "categoryId" to 2L,
+            "scheduledDate" to "2025-07-08",
+            "scheduledTime" to "21:00:00",
+            "notificationTime" to "2025-07-08T18:00:00",
+        )
+
+        setupAuthentication(loginUser)
+        given()
+            .contentType(ContentType.JSON)
+            .body(requestBodyWithCategory)
+            .post("/api/v1/todos")
+            .then()
+            .status(HttpStatus.CREATED)
+            .apply(
+                document(
+                    "addTodo_withCategory",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    requestFields(
+                        fieldWithPath("title").type(JsonFieldType.STRING).description("Todo 제목"),
+                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
                         fieldWithPath("scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
                         fieldWithPath("scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
                         fieldWithPath("notificationTime").type(JsonFieldType.STRING)
@@ -226,30 +362,30 @@ class TodoControllerTest : RestDocsTest() {
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
 
-        setupAuthentication(loginUser)
-
         val todoId = 1L
 
         every { todoService.modifyTodo(userId, todoId, capture(commandSlot)) } returns todoId
 
-        val requestBody = mapOf(
+        // 카테고리 없는 경우
+        val requestBodyNoCategory = mapOf(
             "title" to "서버 개발 수정",
-            "category" to "개발",
+            "categoryId" to null,
             "scheduledDate" to "2025-07-08",
             "scheduledTime" to "21:00:00",
             "notificationTime" to "2025-07-08T19:00:00",
             "isDone" to true,
         )
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
-            .body(requestBody)
+            .body(requestBodyNoCategory)
             .patch("/api/v1/todos/{id}", todoId)
             .then()
             .status(HttpStatus.OK)
             .apply(
                 document(
-                    "modifyTodo",
+                    "modifyTodo_noCategory",
                     requestPreprocessor(),
                     responsePreprocessor(),
                     pathParameters(
@@ -257,7 +393,49 @@ class TodoControllerTest : RestDocsTest() {
                     ),
                     requestFields(
                         fieldWithPath("title").type(JsonFieldType.STRING).description("Todo 제목"),
-                        fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리"),
+                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
+                        fieldWithPath("scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
+                        fieldWithPath("scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
+                        fieldWithPath("notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
+                        fieldWithPath("isDone").type(JsonFieldType.BOOLEAN).description("완료 여부"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("수정된 할 일 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+
+        // 카테고리 있는 경우
+        val requestBodyWithCategory = mapOf(
+            "title" to "서버 개발 수정",
+            "categoryId" to 2L,
+            "scheduledDate" to "2025-07-08",
+            "scheduledTime" to "21:00:00",
+            "notificationTime" to "2025-07-08T19:00:00",
+            "isDone" to true,
+        )
+
+        setupAuthentication(loginUser)
+        given()
+            .contentType(ContentType.JSON)
+            .body(requestBodyWithCategory)
+            .patch("/api/v1/todos/{id}", todoId)
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "modifyTodo_withCategory",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    pathParameters(
+                        parameterWithName("id").description("Todo ID"),
+                    ),
+                    requestFields(
+                        fieldWithPath("title").type(JsonFieldType.STRING).description("Todo 제목"),
+                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID").optional(),
                         fieldWithPath("scheduledDate").type(JsonFieldType.STRING).description("예약 날짜 (yyyy-MM-dd)"),
                         fieldWithPath("scheduledTime").type(JsonFieldType.STRING).description("예약 시간 (HH:mm:ss), null 가능").optional(),
                         fieldWithPath("notificationTime").type(JsonFieldType.STRING).description("알림 시간 (ISO-8601), null 가능").optional(),
@@ -278,13 +456,13 @@ class TodoControllerTest : RestDocsTest() {
         val userId = UUID.randomUUID()
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
-        setupAuthentication(loginUser)
 
         val todoId = 1L
         val done = true
 
         every { todoService.markDone(userId, todoId, done) } returns todoId
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
             .queryParam("done", done)
@@ -317,12 +495,12 @@ class TodoControllerTest : RestDocsTest() {
         val userId = UUID.randomUUID()
         val email = "test@test.com"
         val loginUser = LoginUser(userId, email)
-        setupAuthentication(loginUser)
 
         val todoId = 1L
 
         every { todoService.removeTodo(userId, todoId) } returns todoId
 
+        setupAuthentication(loginUser)
         given()
             .contentType(ContentType.JSON)
             .delete("/api/v1/todos/{id}", todoId)
