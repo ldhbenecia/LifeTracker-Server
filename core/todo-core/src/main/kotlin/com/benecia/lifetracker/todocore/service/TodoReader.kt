@@ -14,7 +14,7 @@ data class TodoReader(
 ) {
     fun findById(userId: UUID, id: Long): TodoInfo {
         val todo = todoRepository.findByUserIdAndId(userId, id)
-        val category = categoryReader.findByUserIdAndId(userId, todo.categoryId)
+        val category = todo.categoryId?.let { categoryReader.findByUserIdAndId(userId, todo.categoryId) }
 
         return TodoInfo(
             id = id,
@@ -36,13 +36,14 @@ data class TodoReader(
         val end = start.withDayOfMonth(start.lengthOfMonth())
 
         val todos = todoRepository.findByUserIdAndScheduledDateRange(userId, start, end)
-        val categoryIds = todos.map { it.categoryId }.distinct()
+
+        // 카테고리 아이디가 null이 아닌 것만 조회해서 카테고리 정보만 미리 가져옴
+        val categoryIds = todos.mapNotNull { it.categoryId }.distinct()
         val categories = categoryReader.findByUserIdAndIds(userId, categoryIds)
         val categoryMap = categories.associateBy { it.id }
 
         return todos.map { todo ->
-            val category = categoryMap[todo.categoryId]
-                ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+            val category = todo.categoryId?.let { categoryMap[it] }
             TodoInfo(
                 id = todo.id!!,
                 title = todo.title,

@@ -7,7 +7,7 @@ import java.time.LocalTime
 data class TodoInfo(
     val id: Long,
     val title: String,
-    val category: CategoryInfo,
+    val category: CategoryInfo?,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime?,
     val notificationTime: LocalDateTime?,

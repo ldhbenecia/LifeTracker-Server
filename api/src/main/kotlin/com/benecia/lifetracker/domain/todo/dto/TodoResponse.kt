@@ -9,7 +9,7 @@ import java.time.LocalTime
 data class TodoResponse(
     val id: Long,
     val title: String,
-    val category: CategoryResponse,
+    val category: CategoryResponse?,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime?,
     val notificationTime: LocalDateTime?,
@@ -21,7 +21,7 @@ data class TodoResponse(
         fun of(info: TodoInfo): TodoResponse = TodoResponse(
             id = info.id,
             title = info.title,
-            category = CategoryResponse.of(info.category),
+            category = info.category?.let { CategoryResponse.of(it) },
             scheduledDate = info.scheduledDate,
             scheduledTime = info.scheduledTime,
             notificationTime = info.notificationTime,

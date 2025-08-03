@@ -1,5 +1,7 @@
 package com.benecia.lifetracker.todocore.service
 
+import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.model.command.ModifyTodo
 import com.benecia.lifetracker.todocore.model.command.NewTodo
 import org.springframework.stereotype.Component
@@ -12,12 +14,16 @@ data class TodoWriter(
     private val todoRepository: TodoRepository,
 ) {
     fun add(userId: UUID, command: NewTodo): Long {
-        val category = categoryReader.findByUserIdAndName(userId, command.category)
+        val categoryId = command.categoryId?.let { categoryId ->
+            val exists = categoryReader.existsByUserIdAndId(userId, categoryId)
+            if (!exists) throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+            categoryId
+        }
 
         val todo = Todo(
             userId = userId,
             title = command.title,
-            categoryId = category.id,
+            categoryId = categoryId,
             scheduledDate = command.scheduledDate,
             scheduledTime = command.scheduledTime,
             notificationTime = command.notificationTime,
@@ -34,7 +40,7 @@ data class TodoWriter(
         // category가 변경되었으면 새 categoryId 조회, 아니면 기존 categoryId 유지
         val newCategoryId = command.category?.let { categoryName ->
             categoryReader.findByUserIdAndName(userId, categoryName).id
-        } ?: existingTodo.category.id
+        } ?: existingTodo.category?.id
 
         val modifiedTodo = Todo(
             id = id,
@@ -58,7 +64,7 @@ data class TodoWriter(
             id = id,
             userId = userId,
             title = existingTodoInfo.title,
-            categoryId = existingTodoInfo.category.id,
+            categoryId = existingTodoInfo.category?.id,
             scheduledDate = existingTodoInfo.scheduledDate,
             scheduledTime = existingTodoInfo.scheduledTime,
             notificationTime = existingTodoInfo.notificationTime,

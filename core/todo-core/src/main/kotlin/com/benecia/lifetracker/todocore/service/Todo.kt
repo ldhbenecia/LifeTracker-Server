@@ -8,7 +8,7 @@ import java.util.UUID
 data class Todo(
     val id: Long? = null,
     val userId: UUID,
-    val categoryId: Long,
+    val categoryId: Long?,
     val title: String,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime?,

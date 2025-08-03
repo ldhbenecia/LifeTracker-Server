@@ -29,8 +29,7 @@ class TodoEntity(
     @Column(nullable = false)
     val userId: UUID,
 
-    @Column(nullable = false)
-    var categoryId: Long,
+    var categoryId: Long? = null,
 
     @Column(nullable = false)
     var title: String,
