@@ -140,26 +140,28 @@ jobs:
             echo "🏥 Starting health check..."
 
             # Wait for services to start
-            echo "⏰ Waiting for services to initialize..."
-            sleep 20
+            echo "⏰ Waiting for backend (sent-server) to initialize..."
 
             MAX_ATTEMPTS=15
-            SLEEP_SEC=10
+            SLEEP_SEC=8
 
             for i in $(seq 1 $MAX_ATTEMPTS)
             do
               BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/health || echo "000")
-              NGINX_HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost || echo "000")
-              NGINX_HTTPS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost || echo "000")
-
-              echo "⏳ Health check attempt $i/$MAX_ATTEMPTS: backend $BACKEND_STATUS, nginx-http $NGINX_HTTP_STATUS, nginx-https $NGINX_HTTPS_STATUS"
+              echo "⏳ Health check attempt $i/$MAX_ATTEMPTS: backend $BACKEND_STATUS"
 
               if [ "$BACKEND_STATUS" = "200" ]; then
-                echo "✅ Health check passed on attempt $i!"
+                echo "✅ Backend health check passed on attempt $i!"
                 echo "📋 Final service status:"
                 docker-compose ps
                 echo "📝 Backend health response:"
                 curl -s -k https://localhost/health || echo "No response"
+
+                # nginx 상태/로그는 백엔드가 정상일 때만 한 번 확인
+                echo "📝 Nginx logs (last 10 lines):"
+                docker-compose logs --tail 10 nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
+                echo "📝 Nginx status:"
+                docker-compose ps nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx status"
                 exit 0
               fi
 
@@ -167,8 +169,6 @@ jobs:
               if (( $i % 3 == 0 )); then
                 echo "📝 [Attempt $i] Recent backend logs:"
                 docker-compose logs --tail 10 sent-server 2>/dev/null || echo "⚠️ Unable to get backend logs"
-                echo "📝 [Attempt $i] Recent nginx logs:"
-                docker-compose logs --tail 10 nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
               fi
 
               sleep $SLEEP_SEC
@@ -177,7 +177,7 @@ jobs:
             echo "❌ Health check failed after $MAX_ATTEMPTS attempts!"
             echo "🔍 Final backend logs:"
             docker-compose logs --tail 30 sent-server 2>/dev/null || echo "⚠️ Unable to get backend logs"
-            echo "🔍 Final nginx logs:"
+            echo "🔍 Nginx logs:"
             docker-compose logs --tail 30 nginx-proxy 2>/dev/null || echo "⚠️ Unable to get nginx logs"
             echo "🔍 Service status:"
             docker-compose ps 2>/dev/null || echo "⚠️ Unable to get docker-compose status"
