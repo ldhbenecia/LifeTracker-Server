@@ -8,7 +8,7 @@ import java.time.LocalTime
 
 data class ModifyTodoRequest(
     val title: String? = null,
-    val category: String? = null,
+    val categoryId: Long? = null,
     val scheduledDate: LocalDate? = null,
     val scheduledTime: LocalTime? = null,
     val notificationTime: LocalDateTime? = null,
@@ -19,7 +19,7 @@ data class ModifyTodoRequest(
     fun toModifyTodo(): ModifyTodo {
         return ModifyTodo(
             title = this.title,
-            category = this.category,
+            categoryId = this.categoryId,
             scheduledDate = this.scheduledDate,
             scheduledTime = this.scheduledTime,
             notificationTime = this.notificationTime,
