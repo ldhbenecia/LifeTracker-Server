@@ -13,10 +13,6 @@ data class CategoryWriter(
     private val categoryRepository: CategoryRepository,
 ) {
     fun add(userId: UUID, command: AddCategory): Long {
-        if (categoryReader.existsByUserIdAndName(userId, command.name)) {
-            throw CoreException(CategoryErrorCode.DUPLICATE_CATEGORY_NAME)
-        }
-
         val category = Category(
             userId = userId,
             name = command.name,
@@ -29,13 +25,6 @@ data class CategoryWriter(
 
     fun modify(userId: UUID, id: Long, command: ModifyCategory): Long {
         val existing = categoryReader.findByUserIdAndId(userId, id)
-
-        // name이 변경되었고, 변경된 이름이 null이 아니면 중복 검사
-        if (command.name != null && existing.name != command.name) {
-            if (categoryReader.existsByUserIdAndName(userId, command.name)) {
-                throw CoreException(CategoryErrorCode.DUPLICATE_CATEGORY_NAME)
-            }
-        }
 
         val updatedCategory = Category(
             id = existing.id,
