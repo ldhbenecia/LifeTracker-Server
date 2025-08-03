@@ -7,7 +7,7 @@ import java.time.LocalTime
 
 data class NewTodoRequest(
     val title: String,
-    val categoryId: Long?,
+    val categoryId: Long? = null,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime? = null,
     val notificationTime: LocalDateTime? = null,
