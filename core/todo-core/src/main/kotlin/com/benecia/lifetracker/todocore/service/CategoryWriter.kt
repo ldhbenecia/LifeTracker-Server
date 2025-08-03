@@ -1,5 +1,7 @@
 package com.benecia.lifetracker.todocore.service
 
+import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.model.command.AddCategory
 import com.benecia.lifetracker.todocore.model.command.ModifyCategory
 import org.springframework.stereotype.Component
@@ -33,9 +35,11 @@ data class CategoryWriter(
         )
 
         return categoryRepository.modify(id, updatedCategory)
+            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
     }
 
     fun remove(userId: UUID, id: Long): Long {
         return categoryRepository.remove(id)
+            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
     }
 }

@@ -6,9 +6,9 @@ import java.util.UUID
 
 @Repository
 interface TodoRepository {
-    fun findByUserIdAndId(userId: UUID, id: Long): Todo
+    fun findByUserIdAndId(userId: UUID, id: Long): Todo?
     fun findByUserIdAndScheduledDateRange(userId: UUID, start: LocalDate, end: LocalDate): List<Todo>
     fun add(todo: Todo): Long
-    fun modify(id: Long, todo: Todo): Long
-    fun remove(id: Long): Long
+    fun modify(id: Long, todo: Todo): Long?
+    fun remove(id: Long): Long?
 }

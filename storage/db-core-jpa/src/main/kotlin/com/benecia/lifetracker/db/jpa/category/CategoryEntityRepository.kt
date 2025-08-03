@@ -1,8 +1,6 @@
 package com.benecia.lifetracker.db.jpa.category
 
-import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.db.jpa.todo.TodoJpaRepository
-import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.service.Category
 import com.benecia.lifetracker.todocore.service.CategoryRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -16,10 +14,8 @@ class CategoryEntityRepository(
     private val todoJpaRepository: TodoJpaRepository,
 ) : CategoryRepository {
 
-    override fun findByUserIdAndId(userId: UUID, id: Long): Category {
-        val entity = categoryJpaRepository.findByUserIdAndId(userId, id)
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
-        return entity.toDomain()
+    override fun findByUserIdAndId(userId: UUID, id: Long): Category? {
+        return categoryJpaRepository.findByUserIdAndId(userId, id)?.toDomain()
     }
 
     override fun findByUserIdAndIds(userId: UUID, ids: List<Long>): List<Category> {
@@ -27,10 +23,8 @@ class CategoryEntityRepository(
         return categoryJpaRepository.findByUserIdAndIdIn(userId, ids).map { it.toDomain() }
     }
 
-    override fun findByUserIdAndName(userId: UUID, name: String): Category {
-        val entity = categoryJpaRepository.findByUserIdAndName(userId, name)
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
-        return entity.toDomain()
+    override fun findByUserIdAndName(userId: UUID, name: String): Category? {
+        return categoryJpaRepository.findByUserIdAndName(userId, name)?.toDomain()
     }
 
     override fun findAllByUserId(userId: UUID): List<Category> {
@@ -44,27 +38,22 @@ class CategoryEntityRepository(
 
     override fun add(category: Category): Long {
         val entity = CategoryEntity.from(category)
-        return categoryJpaRepository.save(entity).id
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_PERSIST_FAILED)
+        return categoryJpaRepository.save(entity).id!!
     }
 
-    override fun modify(id: Long, category: Category): Long {
-        val entity = categoryJpaRepository.findByIdOrNull(id)
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+    override fun modify(id: Long, category: Category): Long? {
+        val entity = categoryJpaRepository.findByIdOrNull(id) ?: return null
 
         entity.name = category.name
         entity.icon = category.icon
         entity.color = category.color
 
         return categoryJpaRepository.save(entity).id
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_PERSIST_FAILED)
     }
 
     @Transactional
-    override fun remove(id: Long): Long {
-        val entity = categoryJpaRepository.findByIdOrNull(id)
-            ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
-
+    override fun remove(id: Long): Long? {
+        val entity = categoryJpaRepository.findByIdOrNull(id) ?: return null
         todoJpaRepository.nullifyCategoryIdByCategoryId(id)
         categoryJpaRepository.delete(entity)
         return id

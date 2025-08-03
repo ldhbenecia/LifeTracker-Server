@@ -1,5 +1,7 @@
 package com.benecia.lifetracker.todocore.service
 
+import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.todocore.exception.TodoErrorCode
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -12,6 +14,7 @@ data class TodoReader(
 ) {
     fun findById(userId: UUID, id: Long): TodoInfo {
         val todo = todoRepository.findByUserIdAndId(userId, id)
+            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
         val category = todo.categoryId?.let { categoryReader.findByUserIdAndId(userId, todo.categoryId) }
 
         return TodoInfo(

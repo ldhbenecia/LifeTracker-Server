@@ -1,7 +1,5 @@
 package com.benecia.lifetracker.db.jpa.todo
 
-import com.benecia.lifetracker.common.exception.CoreException
-import com.benecia.lifetracker.todocore.exception.TodoErrorCode
 import com.benecia.lifetracker.todocore.service.Todo
 import com.benecia.lifetracker.todocore.service.TodoRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -15,10 +13,8 @@ class TodoEntityRepository(
     private val todoJpaRepository: TodoJpaRepository,
 ) : TodoRepository {
 
-    override fun findByUserIdAndId(userId: UUID, id: Long): Todo {
-        val entity = todoJpaRepository.findByUserIdAndId(userId, id)
-            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
-        return entity.toDomain()
+    override fun findByUserIdAndId(userId: UUID, id: Long): Todo? {
+        return todoJpaRepository.findByUserIdAndId(userId, id)?.toDomain()
     }
 
     override fun findByUserIdAndScheduledDateRange(
@@ -36,9 +32,8 @@ class TodoEntityRepository(
     }
 
     @Transactional
-    override fun modify(id: Long, todo: Todo): Long {
-        val entity = todoJpaRepository.findByIdOrNull(id)
-            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
+    override fun modify(id: Long, todo: Todo): Long? {
+        val entity = todoJpaRepository.findByIdOrNull(id) ?: return null
 
         entity.title = todo.title
         entity.categoryId = todo.categoryId
@@ -48,13 +43,12 @@ class TodoEntityRepository(
         entity.isDone = todo.isDone
         entity.status = todo.status
 
-        return todoJpaRepository.save(entity).id!!
+        return todoJpaRepository.save(entity).id
     }
 
-    override fun remove(id: Long): Long {
-        val entity = todoJpaRepository.findByIdOrNull(id)
-            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
+    override fun remove(id: Long): Long? {
+        val entity = todoJpaRepository.findByIdOrNull(id) ?: return null
         entity.remove()
-        return todoJpaRepository.save(entity).id!!
+        return todoJpaRepository.save(entity).id
     }
 }

@@ -2,6 +2,7 @@ package com.benecia.lifetracker.todocore.service
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
+import com.benecia.lifetracker.todocore.exception.TodoErrorCode
 import com.benecia.lifetracker.todocore.model.command.ModifyTodo
 import com.benecia.lifetracker.todocore.model.command.NewTodo
 import org.springframework.stereotype.Component
@@ -38,8 +39,10 @@ data class TodoWriter(
         val existingTodo = todoReader.findById(userId, id)
 
         // category가 변경되었으면 새 categoryId 조회, 아니면 기존 categoryId 유지
-        val newCategoryId = command.categoryId?.let { categoryName ->
-            categoryReader.findByUserIdAndId(userId, categoryName).id
+        val newCategoryId = command.categoryId?.let { categoryId ->
+            val exists = categoryReader.existsByUserIdAndId(userId, categoryId)
+            if (!exists) throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+            categoryId
         } ?: existingTodo.category?.id
 
         val modifiedTodo = Todo(
@@ -55,6 +58,7 @@ data class TodoWriter(
         )
 
         return todoRepository.modify(id, modifiedTodo)
+            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
     }
 
     fun markDone(userId: UUID, id: Long, done: Boolean): Long {
@@ -73,9 +77,11 @@ data class TodoWriter(
         )
 
         return todoRepository.modify(id, updatedTodo)
+            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
     }
 
     fun remove(userId: UUID, id: Long): Long {
         return todoRepository.remove(id)
+            ?: throw CoreException(TodoErrorCode.TODO_NOT_FOUND)
     }
 }
