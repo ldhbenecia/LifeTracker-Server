@@ -1,7 +1,5 @@
 package com.benecia.lifetracker.todocore.service
 
-import com.benecia.lifetracker.common.exception.CoreException
-import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
 import org.springframework.stereotype.Component
 import java.time.LocalDate
