@@ -1,56 +1,74 @@
-:snippets: ../../../build/generated-snippets
-
 == Todo API
 
 === Find Todo
 ==== HTTP Request
-include::{snippets}/findTodo/http-request.adoc[]
+include::{snippets}/findTodo_withCategory/http-request.adoc[]
 ==== Path Parameters
-include::{snippets}/findTodo/path-parameters.adoc[]
+include::{snippets}/findTodo_withCategory/path-parameters.adoc[]
 ==== HTTP Response
-include::{snippets}/findTodo/http-response.adoc[]
+include::{snippets}/findTodo_withCategory/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/findTodo/response-fields.adoc[]
+include::{snippets}/findTodo_withCategory/response-fields.adoc[]
 
-'''
+==== When Category is Absent
+include::{snippets}/findTodo_noCategory/http-response.adoc[]
+include::{snippets}/findTodo_noCategory/response-fields.adoc[]
+
+---
 
 === Add Todo
 ==== HTTP Request
-include::{snippets}/addTodo/http-request.adoc[]
+include::{snippets}/addTodo_withCategory/http-request.adoc[]
 ==== Request Fields
-include::{snippets}/addTodo/request-fields.adoc[]
+include::{snippets}/addTodo_withCategory/request-fields.adoc[]
 ==== HTTP Response
-include::{snippets}/addTodo/http-response.adoc[]
+include::{snippets}/addTodo_withCategory/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/addTodo/response-fields.adoc[]
+include::{snippets}/addTodo_withCategory/response-fields.adoc[]
 
-'''
+==== When Category is Absent
+include::{snippets}/addTodo_noCategory/http-request.adoc[]
+include::{snippets}/addTodo_noCategory/request-fields.adoc[]
+include::{snippets}/addTodo_noCategory/http-response.adoc[]
+include::{snippets}/addTodo_noCategory/response-fields.adoc[]
+
+---
 
 === Find Todos By Month
 ==== HTTP Request
-include::{snippets}/findTodosByMonth/http-request.adoc[]
+include::{snippets}/findTodosByMonth_withCategory/http-request.adoc[]
 ==== Query Parameters
-include::{snippets}/findTodosByMonth/query-parameters.adoc[]
+include::{snippets}/findTodosByMonth_withCategory/query-parameters.adoc[]
 ==== HTTP Response
-include::{snippets}/findTodosByMonth/http-response.adoc[]
+include::{snippets}/findTodosByMonth_withCategory/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/findTodosByMonth/response-fields.adoc[]
+include::{snippets}/findTodosByMonth_withCategory/response-fields.adoc[]
 
-'''
+==== When Category is Absent
+include::{snippets}/findTodosByMonth_noCategory/http-response.adoc[]
+include::{snippets}/findTodosByMonth_noCategory/response-fields.adoc[]
+
+---
 
 === Modify Todo
 ==== HTTP Request
-include::{snippets}/modifyTodo/http-request.adoc[]
+include::{snippets}/modifyTodo_withCategory/http-request.adoc[]
 ==== Path Parameters
-include::{snippets}/modifyTodo/path-parameters.adoc[]
+include::{snippets}/modifyTodo_withCategory/path-parameters.adoc[]
 ==== Request Fields
-include::{snippets}/modifyTodo/request-fields.adoc[]
+include::{snippets}/modifyTodo_withCategory/request-fields.adoc[]
 ==== HTTP Response
-include::{snippets}/modifyTodo/http-response.adoc[]
+include::{snippets}/modifyTodo_withCategory/http-response.adoc[]
 ==== Response Fields
-include::{snippets}/modifyTodo/response-fields.adoc[]
+include::{snippets}/modifyTodo_withCategory/response-fields.adoc[]
 
-'''
+==== When Category is Absent
+include::{snippets}/modifyTodo_noCategory/http-request.adoc[]
+include::{snippets}/modifyTodo_noCategory/request-fields.adoc[]
+include::{snippets}/modifyTodo_noCategory/http-response.adoc[]
+include::{snippets}/modifyTodo_noCategory/response-fields.adoc[]
+
+---
 
 === Mark Done
 ==== HTTP Request
@@ -64,7 +82,7 @@ include::{snippets}/markDone/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/markDone/response-fields.adoc[]
 
-'''
+---
 
 === Remove Todo
 ==== HTTP Request
