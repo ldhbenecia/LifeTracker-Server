@@ -7,7 +7,7 @@ import java.time.LocalTime
 
 data class NewTodoRequest(
     val title: String,
-    val category: String,
+    val categoryId: Long?,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime? = null,
     val notificationTime: LocalDateTime? = null,
@@ -15,7 +15,7 @@ data class NewTodoRequest(
     fun toNewTodo(): NewTodo {
         return NewTodo(
             title = this.title,
-            category = this.category,
+            categoryId = this.categoryId,
             scheduledDate = this.scheduledDate,
             scheduledTime = this.scheduledTime,
             notificationTime = this.notificationTime,

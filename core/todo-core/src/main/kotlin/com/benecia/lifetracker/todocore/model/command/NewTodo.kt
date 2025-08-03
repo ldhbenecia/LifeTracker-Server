@@ -6,7 +6,7 @@ import java.time.LocalTime
 
 data class NewTodo(
     val title: String,
-    val category: String,
+    val categoryId: Long?,
     val scheduledDate: LocalDate,
     val scheduledTime: LocalTime? = null,
     val notificationTime: LocalDateTime? = null,
