@@ -1,16 +1,19 @@
 package com.benecia.lifetracker.db.jpa.category
 
 import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.db.jpa.todo.TodoJpaRepository
 import com.benecia.lifetracker.todocore.exception.CategoryErrorCode
 import com.benecia.lifetracker.todocore.service.Category
 import com.benecia.lifetracker.todocore.service.CategoryRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Repository
 class CategoryEntityRepository(
     private val categoryJpaRepository: CategoryJpaRepository,
+    private val todoJpaRepository: TodoJpaRepository,
 ) : CategoryRepository {
 
     override fun findByUserIdAndId(userId: UUID, id: Long): Category {
@@ -35,8 +38,8 @@ class CategoryEntityRepository(
         return entities.map { it.toDomain() }
     }
 
-    override fun existsByUserIdAndName(userId: UUID, name: String): Boolean {
-        return categoryJpaRepository.existsByUserIdAndName(userId, name)
+    override fun existsByUserIdAndId(userId: UUID, categoryId: Long): Boolean {
+        return categoryJpaRepository.existsByUserIdAndId(userId, categoryId)
     }
 
     override fun add(category: Category): Long {
@@ -57,9 +60,12 @@ class CategoryEntityRepository(
             ?: throw CoreException(CategoryErrorCode.CATEGORY_PERSIST_FAILED)
     }
 
+    @Transactional
     override fun remove(id: Long): Long {
         val entity = categoryJpaRepository.findByIdOrNull(id)
             ?: throw CoreException(CategoryErrorCode.CATEGORY_NOT_FOUND)
+
+        todoJpaRepository.nullifyCategoryIdByCategoryId(id)
         categoryJpaRepository.delete(entity)
         return id
     }
