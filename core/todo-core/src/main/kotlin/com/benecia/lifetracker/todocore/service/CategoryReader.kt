@@ -56,7 +56,7 @@ data class CategoryReader(
         }
     }
 
-    fun existsByUserIdAndName(userId: UUID, name: String): Boolean {
-        return categoryRepository.existsByUserIdAndName(userId, name)
+    fun existsByUserIdAndId(userId: UUID, categoryId: Long): Boolean {
+        return categoryRepository.existsByUserIdAndId(userId, categoryId)
     }
 }
