@@ -3,6 +3,9 @@ name: Deploy to GCP Compute Engine
 on:
   push:
     branches: [ develop ]
+    paths-ignore:
+      - 'api/src/docs/asciidoc/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 concurrency:
