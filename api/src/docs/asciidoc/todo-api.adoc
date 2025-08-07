@@ -1,3 +1,5 @@
+:snippets: ../../../build/generated-snippets
+
 == Todo API
 
 === Find Todo

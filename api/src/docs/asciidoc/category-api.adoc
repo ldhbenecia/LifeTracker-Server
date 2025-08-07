@@ -1,3 +1,5 @@
+:snippets: ../../../build/generated-snippets
+
 == Category API
 
 === Get All Categories

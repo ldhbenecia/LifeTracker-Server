@@ -1,3 +1,5 @@
+:snippets: ../../../build/generated-snippets
+
 == Friend API
 
 === Add Friend
