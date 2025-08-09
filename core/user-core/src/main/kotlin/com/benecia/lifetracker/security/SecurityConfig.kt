@@ -3,6 +3,7 @@ package com.benecia.lifetracker.security
 import com.benecia.lifetracker.security.filter.JwtAuthenticationFilter
 import com.benecia.lifetracker.security.handler.OAuth2AuthenticationFailureHandler
 import com.benecia.lifetracker.security.handler.OAuth2AuthenticationSuccessHandler
+import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -29,6 +30,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
+                    .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers("/login/oauth2/**").permitAll()
