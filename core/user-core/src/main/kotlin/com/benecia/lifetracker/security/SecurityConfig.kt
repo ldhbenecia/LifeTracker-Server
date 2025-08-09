@@ -35,6 +35,7 @@ class SecurityConfig(
                     .requestMatchers("/health").permitAll()
                     .requestMatchers("/docs/**").permitAll()
                     .requestMatchers("/actuator/prometheus").permitAll()
+                    .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2Login { oauth2 ->
