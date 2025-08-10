@@ -35,7 +35,6 @@ class SecurityConfig(
                     .requestMatchers("/api/public/**").permitAll()
                     .requestMatchers("/login/oauth2/**").permitAll()
                     .requestMatchers("/health").permitAll()
-                    .requestMatchers("/docs/**").permitAll()
                     .requestMatchers("/actuator/prometheus").permitAll()
                     .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/error").permitAll()
@@ -47,6 +46,7 @@ class SecurityConfig(
                     .requestMatchers("/.git/**").denyAll()
                     .requestMatchers("/.gitignore").denyAll()
                     .requestMatchers("/.gitconfig").denyAll()
+                    .requestMatchers("/.gitattributes").denyAll()
                     // 환경설정 파일들
                     .requestMatchers("/.env").denyAll()
                     .requestMatchers("/.env.local").denyAll()
@@ -131,7 +131,7 @@ class SecurityConfig(
         config.allowCredentials = true
 
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", config)
+        source.registerCorsConfiguration("/api/**", config)
         return source
     }
 }

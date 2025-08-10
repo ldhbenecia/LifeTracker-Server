@@ -4,6 +4,8 @@ import com.benecia.lifetracker.common.event.ErrorOccuredEvent
 import com.benecia.lifetracker.common.exception.CoreException
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
+import org.springframework.security.authentication.InsufficientAuthenticationException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,6 +17,9 @@ class ErrorEventListener(
     @EventListener
     fun onError(event: ErrorOccuredEvent) {
         val ex = event.exception
+
+        if (ex is InsufficientAuthenticationException) return
+        if (ex is AuthenticationException) return
 
         val (status, name, message, type) = if (ex is CoreException) {
             listOf(

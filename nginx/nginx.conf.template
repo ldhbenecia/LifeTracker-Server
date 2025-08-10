@@ -1,17 +1,24 @@
-worker_processes  1;
+worker_processes 1;
 
 events {
-    worker_connections  1024;
+    worker_connections 1024;
 }
 
 http {
-    include       mime.types;
-    default_type  application/octet-stream;
-    sendfile        on;
-    keepalive_timeout  65;
+    include mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    keepalive_timeout 65;
 
     limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
 
+    map $http_user_agent $bad_bot {
+        default 0;
+        ~*(?i)(nmap|sqlmap|nikto|masscan|scanner|bot|python|curl) 1;
+        "" 1;  # 빈 User-Agent
+    }
+
+    # HTTP to HTTPS 리다이렉트
     server {
         listen 80;
         server_name ${DOMAIN_NAME};
@@ -32,9 +39,44 @@ http {
         add_header X-XSS-Protection "1; mode=block";
         add_header Referrer-Policy "strict-origin-when-cross-origin";
 
-        location ~* /\.(git|env|htaccess|htpasswd|gitignore|gitconfig) { deny all; }
-        location ~* /(vendor|phpunit|test|tests|backup|admin|wp-admin|wp-content|wp-includes|cms|drupal|joomla|debug|dev|demo|cgi-bin|phpmyadmin|mysql|geoserver|webui|containers|server-info|server-status|_layouts|old|blog|panel|public|apps|app|workspace|crm|V2|ws|www|zend|yii)/ { deny all; }
-        location ~* \.(php|sql|zip|tar\.gz|rar|bak)$ { deny all; }
+        if ($bad_bot) {
+            return 444;
+        }
+
+        location ~* /\.(git|env|htaccess|htpasswd|gitignore|gitconfig) {
+            deny all;
+            access_log off;
+        }
+
+        location ~* /(vendor|phpunit|test|tests|backup|admin|wp-admin|wp-content|wp-includes|cms|drupal|joomla|debug|dev|demo|cgi-bin|phpmyadmin|mysql|geoserver|webui|containers|server-info|server-status|_layouts|old|blog|panel|public|apps|app|workspace|crm|V2|ws|www|zend|yii)/ {
+            deny all;
+            access_log off;
+        }
+
+        location ~* \.(php|sql|zip|tar\.gz|rar|bak)$ {
+            deny all;
+            access_log off;
+        }
+
+        location ~* \.(sh|py|pl|rb|cgi|asp|aspx|jsp)$ {
+            deny all;
+            access_log off;
+        }
+
+        location ~* \.(log|conf|config|ini|key|pem|crt|pfx|old|orig|lock|txt|json)$ {
+            deny all;
+            access_log off;
+        }
+
+        location ~* /(secret|secrets|private|backup|backups|config|configs)(\.|/|$) {
+            deny all;
+            access_log off;
+        }
+
+        location ~* ^/\.well-known/ {
+            deny all;
+            access_log off;
+        }
 
         location = /favicon.ico { access_log off; log_not_found off; }
         location = /robots.txt  { access_log off; log_not_found off; }
