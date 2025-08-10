@@ -10,6 +10,8 @@ http {
     sendfile        on;
     keepalive_timeout  65;
 
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+
     server {
         listen 80;
         server_name ${DOMAIN_NAME};
@@ -22,9 +24,21 @@ http {
 
         ssl_certificate /etc/certs/fullchain.pem;
         ssl_certificate_key /etc/certs/privkey.pem;
-
         ssl_protocols TLSv1.2 TLSv1.3;
         ssl_ciphers HIGH:!aNULL:!MD5;
+
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-Content-Type-Options "nosniff";
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Referrer-Policy "strict-origin-when-cross-origin";
+
+        location ~* /\.(git|env|htaccess|htpasswd|gitignore|gitconfig) { deny all; }
+        location ~* /(vendor|phpunit|test|tests|backup|admin|wp-admin|wp-content|wp-includes|cms|drupal|joomla|debug|dev|demo|cgi-bin|phpmyadmin|mysql|geoserver|webui|containers|server-info|server-status|_layouts|old|blog|panel|public|apps|app|workspace|crm|V2|ws|www|zend|yii)/ { deny all; }
+        location ~* \.(php|sql|zip|tar\.gz|rar|bak)$ { deny all; }
+
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location = /robots.txt  { access_log off; log_not_found off; }
+        location = /sitemap.xml { access_log off; log_not_found off; }
 
         location / {
             proxy_pass http://${BACKEND_SERVICE}:${BACKEND_PORT};
