@@ -34,6 +34,11 @@ http {
         ssl_protocols TLSv1.2 TLSv1.3;
         ssl_ciphers HIGH:!aNULL:!MD5;
 
+        location = /health {
+                access_log off;
+                proxy_pass http://${BACKEND_SERVICE}:${BACKEND_PORT}/health;
+        }
+
         add_header X-Frame-Options "SAMEORIGIN";
         add_header X-Content-Type-Options "nosniff";
         add_header X-XSS-Protection "1; mode=block";
