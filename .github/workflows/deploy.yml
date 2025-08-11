@@ -150,7 +150,7 @@ jobs:
 
             for i in $(seq 1 $MAX_ATTEMPTS)
             do
-              BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/health || echo "000")
+              BACKEND_STATUS=$(curl -A "health-probe" -s -o /dev/null -w "%{http_code}" -k https://localhost/health || echo "000")
               echo "⏳ Health check attempt $i/$MAX_ATTEMPTS: backend $BACKEND_STATUS"
 
               if [ "$BACKEND_STATUS" = "200" ]; then
