@@ -15,7 +15,7 @@ http {
     map $http_user_agent $bad_bot {
         default 0;
         ~*(?i)(nmap|sqlmap|nikto|masscan|scanner|bot|python|curl) 1;
-        "" 1;  # 빈 User-Agent
+        "" 1;
     }
 
     server {
