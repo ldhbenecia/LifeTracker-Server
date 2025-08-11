@@ -50,7 +50,7 @@ class JwtAuthenticationFilter(
                 }
             }
         } catch (exception: Exception) {
-            log.warn(
+            log.debug(
                 "Unauthorized request due to JWT error: {} | Request: {} {} | IP: {} | User-Agent: {} | Auth: {}",
                 exception.message,
                 request.method,
