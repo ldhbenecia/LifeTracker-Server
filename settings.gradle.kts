@@ -10,6 +10,7 @@ include(
     "core:user-core",
     "core:todo-core",
     "support:monitoring",
+    "support:logging",
 )
 
 pluginManagement {

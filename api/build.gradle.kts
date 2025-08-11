@@ -9,6 +9,7 @@ tasks.getByName("jar") {
 dependencies {
     implementation(project(":common"))
     implementation(project(":support:monitoring"))
+    implementation(project(":support:logging"))
     implementation(project(":core:user-core"))
     implementation(project(":core:todo-core"))
     implementation(project(":storage:db-core-jpa"))
