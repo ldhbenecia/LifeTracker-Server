@@ -18,7 +18,6 @@ http {
         "" 1;  # 빈 User-Agent
     }
 
-    # HTTP to HTTPS 리다이렉트
     server {
         listen 80;
         server_name ${DOMAIN_NAME};
@@ -35,8 +34,8 @@ http {
         ssl_ciphers HIGH:!aNULL:!MD5;
 
         location = /health {
-                access_log off;
-                proxy_pass http://${BACKEND_SERVICE}:${BACKEND_PORT}/health;
+            access_log off;
+            proxy_pass http://${BACKEND_SERVICE}:${BACKEND_PORT}/health;
         }
 
         add_header X-Frame-Options "SAMEORIGIN";
