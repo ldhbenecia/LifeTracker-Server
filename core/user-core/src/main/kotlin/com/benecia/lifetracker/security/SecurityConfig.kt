@@ -131,7 +131,7 @@ class SecurityConfig(
         config.allowCredentials = true
 
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/api/**", config)
+        source.registerCorsConfiguration("/**", config)
         return source
     }
 }
