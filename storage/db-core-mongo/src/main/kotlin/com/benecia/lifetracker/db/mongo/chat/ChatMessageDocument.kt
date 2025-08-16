@@ -33,7 +33,7 @@ class ChatMessageDocument(
     }
 
     fun toDomain(): ChatMessage = ChatMessage(
-        id = this.id,
+        id = this.id!!,
         roomId = this.roomId,
         senderId = this.senderId,
         senderName = this.senderName,
