@@ -1,18 +1,17 @@
 package com.benecia.lifetracker.chat.chatMessage.service
 
-import com.benecia.lifetracker.common.config.QueueNames
+import com.benecia.lifetracker.chat.config.RabbitProperties
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Service
 
 @Service
 class ChatMessageProducer(
     private val rabbitTemplate: RabbitTemplate,
+    private val rabbitProperties: RabbitProperties,
 ) {
 
-    /**
-     * 메세지를 RabbitMQ 큐에 발행
-     */
     fun sendChatMessage(message: ChatMessage) {
-        rabbitTemplate.convertAndSend(QueueNames.CHAT_QUEUE, message)
+        val routingKey = rabbitProperties.chatRouting.key + "." + message.roomId
+        rabbitTemplate.convertAndSend(rabbitProperties.chatExchange.name, routingKey, message)
     }
 }
