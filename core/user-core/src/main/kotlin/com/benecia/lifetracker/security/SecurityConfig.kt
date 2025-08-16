@@ -38,6 +38,7 @@ class SecurityConfig(
                     .requestMatchers("/actuator/prometheus").permitAll()
                     .requestMatchers("/actuator/health").permitAll()
                     .requestMatchers("/error").permitAll()
+                    .requestMatchers("/ws-chat/**").permitAll()
                     .requestMatchers("/favicon.ico").permitAll()
                     .requestMatchers("/robots.txt").permitAll()
                     .requestMatchers("/sitemap.xml").permitAll()
@@ -125,7 +126,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val config = CorsConfiguration()
-        config.allowedOrigins = listOf("http://localhost:3000")
+        config.allowedOrigins = listOf("http://localhost:3000", "http://localhost:63342")
         config.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("Authorization", "Content-Type", "Accept", "X-Requested-With")
         config.allowCredentials = true
