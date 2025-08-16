@@ -8,6 +8,7 @@ import java.util.UUID
 class LoginUser(
     val id: UUID,
     val email: String,
+    val displayName: String,
 ) : UserDetails {
 
     override fun getUsername(): String = id.toString()
@@ -21,7 +22,7 @@ class LoginUser(
     companion object {
         fun from(user: User): LoginUser {
             val id = user.id ?: throw IllegalArgumentException("User id is null")
-            return LoginUser(id, user.email)
+            return LoginUser(id, user.email, user.displayName)
         }
     }
 }
