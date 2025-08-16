@@ -42,13 +42,13 @@ class JwtAuthenticationEntryPoint(
 
         // 기타 공격 경로들
         "/vendor/phpunit", "/phpunit", "/geoserver", "/webui", "/solr",
-        "/elasticsearch", "containers/json", "/actuator"
+        "/elasticsearch", "containers/json", "/actuator",
     )
 
     // 의심스러운 User-Agent들
     private val suspiciousUserAgents = setOf(
         "nmap", "sqlmap", "nikto", "masscan", "zgrab", "censys", "shodan",
-        "scanner", "python-requests", "curl", "wget", "java/", "bot", "crawler"
+        "scanner", "python-requests", "curl", "wget", "java/", "bot", "crawler",
     )
 
     override fun commence(
@@ -80,7 +80,10 @@ class JwtAuthenticationEntryPoint(
         } else {
             log.debug(
                 "BLOCKED attack attempt: method={}, uri={}, remoteAddr={}, userAgent={}",
-                method, uri, remoteAddr, userAgent
+                method,
+                uri,
+                remoteAddr,
+                userAgent,
             )
         }
 
@@ -113,7 +116,7 @@ class JwtAuthenticationEntryPoint(
         val hasDangerousExtension = listOf(
             ".sh", ".py", ".pl", ".rb", ".cgi", ".asp", ".aspx", ".jsp", ".php",
             ".zip", ".tar.gz", ".rar", ".bak", ".sql", ".old", ".orig", ".tmp",
-            ".log", ".conf", ".config", ".ini", ".key", ".pem", ".crt"
+            ".log", ".conf", ".config", ".ini", ".key", ".pem", ".crt",
         ).any { ext -> uri.endsWith(ext, ignoreCase = true) }
 
         return hasAttackPattern || hasSuspiciousAgent || hasDangerousExtension
