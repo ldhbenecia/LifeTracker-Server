@@ -3,7 +3,7 @@ services:
     image: mysql:8.0
     container_name: mysql-sent
     env_file:
-      - ./.env
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -25,7 +25,7 @@ services:
     image: mongo:6.0
     container_name: mongodb-sent
     env_file:
-      - ./.env
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
@@ -48,8 +48,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "61613:61613"
     env_file:
-      - ./.env
+      - .env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -62,12 +63,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    command: >
+      bash -c "
+        rabbitmq-plugins enable --offline rabbitmq_stomp rabbitmq_web_stomp &&
+        docker-entrypoint.sh rabbitmq-server
+      "
 
   sent-server:
     image: ldhbenecia/sent-app:latest
     container_name: sent-server
     env_file:
-      - ./.env
+      - .env
     environment:
       SPRING_PROFILES_ACTIVE: dev
     expose:
@@ -90,7 +96,7 @@ services:
       - "80:80"
       - "443:443"
     env_file:
-      - ./.env
+      - .env
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
       - /home/ubuntu/certs/devcerts:/etc/certs:ro
