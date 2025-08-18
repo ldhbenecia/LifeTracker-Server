@@ -3,14 +3,14 @@ package com.benecia.lifetracker.db.jpa
 import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseEntity {
     @CreationTimestamp
-    val createdAt: ZonedDateTime? = null
+    val createdAt: LocalDateTime? = null
 
     @UpdateTimestamp
-    var updatedAt: ZonedDateTime? = null
+    var updatedAt: LocalDateTime? = null
         protected set
 }
