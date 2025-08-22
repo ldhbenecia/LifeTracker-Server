@@ -1,10 +1,10 @@
 package com.benecia.lifetracker.db.jpa.chat
 
-import com.benecia.lifetracker.chat.chatRoom.exception.ChatRoomErrorCode
+import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomDetail
+import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomWithOpponent
+import com.benecia.lifetracker.chat.chatRoom.model.UserSummary
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoom
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomRepository
-import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomWithOpponent
-import com.benecia.lifetracker.common.exception.CoreException
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -51,19 +51,21 @@ class ChatRoomEntityRepository(
         return chatRoom.id!!
     }
 
-    override fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {
-        val user = chatRoomUserJpaRepository.findById(ChatRoomUserId(roomId, userId))
-            .orElseThrow { CoreException(ChatRoomErrorCode.CHAT_ROOM_USER_NOT_FOUND) }
-        user.notificationEnabled = enabled
-        chatRoomUserJpaRepository.save(user)
-        return roomId
-    }
+    override fun findRoomDetail(userId: UUID, roomId: Long): ChatRoomDetail? {
+        val projection = chatRoomJpaRepository.findRoomDetail(userId, roomId)
+            ?: return null
 
-    override fun hideRoomForUser(userId: UUID, roomId: Long): Long {
-        val user = chatRoomUserJpaRepository.findById(ChatRoomUserId(roomId, userId))
-            .orElseThrow { CoreException(ChatRoomErrorCode.CHAT_ROOM_USER_NOT_FOUND) }
-        user.visible = false
-        chatRoomUserJpaRepository.save(user)
-        return roomId
+        return ChatRoomDetail(
+            roomId = projection.roomId,
+            lastMessage = projection.lastMessage,
+            lastMessageTime = projection.lastMessageTime,
+            opponent = UserSummary(
+                userId = projection.opponentUserId,
+                userName = projection.opponentUserName,
+                userProfileImageUrl = projection.opponentUserProfileImageUrl,
+            ),
+            myNotificationEnabled = projection.myNotificationEnabled,
+            myVisible = projection.myVisible,
+        )
     }
 }

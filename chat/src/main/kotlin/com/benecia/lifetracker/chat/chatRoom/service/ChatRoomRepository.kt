@@ -1,5 +1,7 @@
 package com.benecia.lifetracker.chat.chatRoom.service
 
+import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomDetail
+import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomWithOpponent
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
@@ -8,6 +10,5 @@ interface ChatRoomRepository {
     fun findAllRoomsByUserId(userId: UUID): List<ChatRoom>
     fun findRoomsWithOpponents(userId: UUID): List<ChatRoomWithOpponent>
     fun createRoom(userId: UUID, opponentUserId: UUID): Long
-    fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long
-    fun hideRoomForUser(userId: UUID, roomId: Long): Long
+    fun findRoomDetail(userId: UUID, roomId: Long): ChatRoomDetail?
 }
