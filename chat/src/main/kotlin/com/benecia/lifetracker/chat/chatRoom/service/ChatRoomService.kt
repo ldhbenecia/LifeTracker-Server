@@ -14,8 +14,8 @@ class ChatRoomService(
         return chatRoomReader.readRooms(userId)
     }
 
-    fun createRoom(myUserId: UUID, opponentUserId: UUID): Long {
-        return chatRoomWriter.createRoom(myUserId, opponentUserId)
+    fun createRoom(userId: UUID, opponentUserId: UUID): Long {
+        return chatRoomWriter.createRoom(userId, opponentUserId)
     }
 
     fun hideRoom(userId: UUID, roomId: Long): Long {
