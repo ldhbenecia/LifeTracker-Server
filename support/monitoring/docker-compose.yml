@@ -9,7 +9,7 @@ services:
       - prometheus_data:/prometheus
     restart: unless-stopped
     networks:
-      - sent-server_sent_net
+      - sent-server_sent-net
 
   grafana:
     container_name: sent-grafana
