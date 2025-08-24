@@ -1,11 +1,13 @@
 package com.benecia.lifetracker.discord
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 
 @Service
+@Profile("dev")
 class DiscordWebhookService(
     @Value("\${discord.dev.webhook-url}") private val webhookUrl: String,
     private val restClient: RestClient,

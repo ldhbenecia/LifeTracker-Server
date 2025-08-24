@@ -2,6 +2,7 @@ package com.benecia.lifetracker.discord
 
 import com.benecia.lifetracker.common.event.ErrorOccuredEvent
 import com.benecia.lifetracker.common.exception.CoreException
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.security.authentication.InsufficientAuthenticationException
@@ -9,6 +10,7 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("dev")
 class ErrorEventListener(
     private val discordWebhookService: DiscordWebhookService,
 ) {
