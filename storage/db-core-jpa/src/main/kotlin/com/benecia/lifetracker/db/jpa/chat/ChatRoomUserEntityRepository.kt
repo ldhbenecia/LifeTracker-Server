@@ -19,7 +19,7 @@ class ChatRoomUserEntityRepository(
         return roomId
     }
 
-    override fun hideRoomForUser(userId: UUID, roomId: Long): Long {
+    override fun delete(userId: UUID, roomId: Long): Long {
         val user = chatRoomUserJpaRepository.findById(ChatRoomUserId(roomId, userId))
             .orElseThrow { CoreException(ChatRoomErrorCode.CHAT_ROOM_USER_NOT_FOUND) }
         user.visible = false

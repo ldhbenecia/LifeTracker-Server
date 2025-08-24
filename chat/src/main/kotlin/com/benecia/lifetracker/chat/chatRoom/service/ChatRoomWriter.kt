@@ -6,15 +6,15 @@ import java.util.UUID
 @Component
 class ChatRoomWriter(
     private val chatRoomRepository: ChatRoomRepository,
-    private val chatRoomUserRepository: ChatRoomUserRepository
+    private val chatRoomUserRepository: ChatRoomUserRepository,
 ) {
 
     fun createRoom(userId: UUID, opponentUserId: UUID): Long {
         return chatRoomRepository.createRoom(userId, opponentUserId)
     }
 
-    fun hideRoom(userId: UUID, roomId: Long): Long {
-        return chatRoomUserRepository.hideRoomForUser(userId, roomId)
+    fun removeRoom(userId: UUID, roomId: Long): Long {
+        return chatRoomUserRepository.delete(userId, roomId)
     }
 
     fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {

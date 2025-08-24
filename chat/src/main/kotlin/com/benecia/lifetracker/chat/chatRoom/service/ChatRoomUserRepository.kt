@@ -6,5 +6,5 @@ import java.util.UUID
 @Repository
 interface ChatRoomUserRepository {
     fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long
-    fun hideRoomForUser(userId: UUID, roomId: Long): Long
+    fun delete(userId: UUID, roomId: Long): Long
 }

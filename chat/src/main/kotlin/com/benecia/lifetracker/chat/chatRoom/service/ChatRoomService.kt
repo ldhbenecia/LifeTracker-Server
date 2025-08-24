@@ -18,8 +18,8 @@ class ChatRoomService(
         return chatRoomWriter.createRoom(userId, opponentUserId)
     }
 
-    fun hideRoom(userId: UUID, roomId: Long): Long {
-        return chatRoomWriter.hideRoom(userId, roomId)
+    fun removeRoom(userId: UUID, roomId: Long): Long {
+        return chatRoomWriter.removeRoom(userId, roomId)
     }
 
     fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {
