@@ -3,6 +3,7 @@ package com.benecia.lifetracker.chat.chatMessage.controller
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessage
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageProducer
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageRequest
+import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageService
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -13,6 +14,8 @@ import java.util.UUID
 @Controller
 class ChatController(
     private val chatMessageProducer: ChatMessageProducer,
+    private val chatMessageService: ChatMessageService,
+
 ) {
     @MessageMapping("chat.message.{roomId}")
     fun sendChatMessage(
@@ -27,7 +30,7 @@ class ChatController(
             senderName = loginUser?.displayName ?: "unknown",
             content = message.content,
         )
-
         chatMessageProducer.sendChatMessage(enriched)
+        chatMessageService.backupMessage(enriched)
     }
 }
