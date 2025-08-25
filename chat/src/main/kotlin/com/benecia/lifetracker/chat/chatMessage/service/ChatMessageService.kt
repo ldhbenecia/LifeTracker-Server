@@ -12,7 +12,7 @@ class ChatMessageService(
         return chatMessageReader.getMessages(roomId)
     }
 
-    fun backupMessage(message: ChatMessage) {
+    fun backupMessage(message: ChatMessage): ChatMessage {
         return chatMessageWriter.backup(message)
     }
 }

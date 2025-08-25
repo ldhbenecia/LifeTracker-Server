@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 class ChatMessageWriter(
     private val chatMessageRepository: ChatMessageRepository,
 ) {
-    fun backup(message: ChatMessage) {
+    fun backup(message: ChatMessage): ChatMessage {
         return chatMessageRepository.save(message)
     }
 }
