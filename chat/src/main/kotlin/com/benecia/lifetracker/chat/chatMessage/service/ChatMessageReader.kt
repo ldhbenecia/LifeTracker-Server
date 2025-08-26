@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 class ChatMessageReader(
     private val chatMessageRepository: ChatMessageRepository,
 ) {
-    fun getMessages(roomId: String): List<ChatMessage> {
+    fun getMessages(roomId: Long): List<ChatMessage> {
         return chatMessageRepository.findAllByRoomId(roomId)
     }
 }

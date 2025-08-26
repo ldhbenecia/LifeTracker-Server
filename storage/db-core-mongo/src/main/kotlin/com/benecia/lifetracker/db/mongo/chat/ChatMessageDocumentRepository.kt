@@ -14,7 +14,7 @@ class ChatMessageDocumentRepository(
         return saved.toDomain()
     }
 
-    override fun findAllByRoomId(roomId: String): List<ChatMessage> {
+    override fun findAllByRoomId(roomId: Long): List<ChatMessage> {
         return chatMessageJpaRepository.findAllByRoomIdOrderByTimestampAsc(roomId)
             .map { it.toDomain() }
     }

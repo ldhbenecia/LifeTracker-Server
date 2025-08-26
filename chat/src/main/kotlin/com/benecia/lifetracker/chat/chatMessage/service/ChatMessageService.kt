@@ -8,7 +8,7 @@ class ChatMessageService(
     private val chatMessageWriter: ChatMessageWriter,
 ) {
 
-    fun getMessages(roomId: String): List<ChatMessage> {
+    fun getMessages(roomId: Long): List<ChatMessage> {
         return chatMessageReader.getMessages(roomId)
     }
 
