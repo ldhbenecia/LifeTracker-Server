@@ -10,6 +10,11 @@ class ChatRoomService(
     private val chatRoomWriter: ChatRoomWriter,
 ) {
 
+    fun findOrCreateRoom(senderId: UUID, opponentId: UUID): Long {
+        val existingRoomId = chatRoomReader.findRoomByUsers(senderId, opponentId)
+        return existingRoomId ?: chatRoomWriter.createRoom(senderId, opponentId)
+    }
+
     fun readRooms(userId: UUID): List<ChatRoomSummary> {
         return chatRoomReader.readRooms(userId)
     }

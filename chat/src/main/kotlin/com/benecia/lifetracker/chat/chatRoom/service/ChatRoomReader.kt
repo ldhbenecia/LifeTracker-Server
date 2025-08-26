@@ -13,6 +13,10 @@ class ChatRoomReader(
     private val chatRoomRepository: ChatRoomRepository,
 ) {
 
+    fun findRoomByUsers(user1Id: UUID, user2Id: UUID): Long? {
+        return chatRoomRepository.findRoomIdByUserIds(user1Id, user2Id)
+    }
+
     fun readRooms(userId: UUID): List<ChatRoomSummary> {
         val roomsWithOpponents = chatRoomRepository.findRoomsWithOpponents(userId)
 

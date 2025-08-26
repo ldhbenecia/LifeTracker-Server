@@ -7,6 +7,7 @@ import java.util.UUID
 
 @Repository
 interface ChatRoomRepository {
+    fun findRoomIdByUserIds(user1Id: UUID, user2Id: UUID): Long?
     fun findAllRoomsByUserId(userId: UUID): List<ChatRoom>
     fun findRoomsWithOpponents(userId: UUID): List<ChatRoomWithOpponent>
     fun createRoom(userId: UUID, opponentUserId: UUID): Long

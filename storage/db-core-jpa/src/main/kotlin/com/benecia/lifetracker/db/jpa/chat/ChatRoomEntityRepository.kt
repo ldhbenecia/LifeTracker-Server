@@ -15,6 +15,10 @@ class ChatRoomEntityRepository(
     private val chatRoomUserJpaRepository: ChatRoomUserJpaRepository,
 ) : ChatRoomRepository {
 
+    override fun findRoomIdByUserIds(user1Id: UUID, user2Id: UUID): Long? {
+        return chatRoomUserJpaRepository.findRoomIdByUserIds(user1Id, user2Id)
+    }
+
     override fun findAllRoomsByUserId(userId: UUID): List<ChatRoom> {
         return chatRoomJpaRepository.findAllRoomsByUserId(userId)
             .map { entity ->
@@ -32,23 +36,14 @@ class ChatRoomEntityRepository(
 
     @Transactional
     override fun createRoom(userId: UUID, opponentUserId: UUID): Long {
-        val existingRoomId = chatRoomUserJpaRepository.findRoomIdByUserIds(userId, opponentUserId)
-        if (existingRoomId != null) {
-            return existingRoomId
-        }
+        val chatRoom = chatRoomJpaRepository.save(ChatRoomEntity())
+        val roomId = chatRoom.id!!
 
-        val chatRoom = ChatRoomEntity()
-        chatRoomJpaRepository.save(chatRoom)
+        val user1 = ChatRoomUserEntity(id = ChatRoomUserId(roomId = roomId, userId = userId))
+        val user2 = ChatRoomUserEntity(id = ChatRoomUserId(roomId = roomId, userId = opponentUserId))
 
-        val user1 = ChatRoomUserEntity(
-            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = userId),
-        )
-        val user2 = ChatRoomUserEntity(
-            id = ChatRoomUserId(roomId = chatRoom.id!!, userId = opponentUserId),
-        )
         chatRoomUserJpaRepository.saveAll(listOf(user1, user2))
-
-        return chatRoom.id!!
+        return roomId
     }
 
     override fun findRoomDetail(userId: UUID, roomId: Long): ChatRoomDetail? {
