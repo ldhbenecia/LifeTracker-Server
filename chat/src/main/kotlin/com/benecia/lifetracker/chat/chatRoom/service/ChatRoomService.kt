@@ -30,4 +30,8 @@ class ChatRoomService(
     fun setNotification(userId: UUID, roomId: Long, enabled: Boolean): Long {
         return chatRoomWriter.setNotification(userId, roomId, enabled)
     }
+
+    fun updateLastMessage(roomId: Long, message: String) {
+        return chatRoomWriter.updateLastMessage(roomId, message)
+    }
 }

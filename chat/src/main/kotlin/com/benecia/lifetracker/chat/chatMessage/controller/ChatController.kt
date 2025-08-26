@@ -45,6 +45,7 @@ class ChatController(
         )
         chatMessageProducer.sendChatMessage(enriched)
         chatMessageService.backupMessage(enriched)
+        chatRoomService.updateLastMessage(enriched.roomId, enriched.content)
 
         logger.info("Message sent and backed up for room ID: {}", roomId)
     }

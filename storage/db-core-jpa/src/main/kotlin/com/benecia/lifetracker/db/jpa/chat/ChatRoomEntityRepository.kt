@@ -5,8 +5,10 @@ import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomWithOpponent
 import com.benecia.lifetracker.chat.chatRoom.model.UserSummary
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoom
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
@@ -62,5 +64,13 @@ class ChatRoomEntityRepository(
             myNotificationEnabled = projection.myNotificationEnabled,
             myVisible = projection.myVisible,
         )
+    }
+
+    @Transactional
+    override fun updateLastMessage(roomId: Long, message: String, messageTime: LocalDateTime) {
+        chatRoomJpaRepository.findByIdOrNull(roomId)?.let {
+            it.lastMessage = message
+            it.lastMessageTime = messageTime
+        }
     }
 }
