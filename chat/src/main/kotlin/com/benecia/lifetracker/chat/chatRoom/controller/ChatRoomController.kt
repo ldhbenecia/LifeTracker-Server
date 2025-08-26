@@ -49,11 +49,11 @@ class ChatRoomController(
 
     @PutMapping("/{roomId}/notification")
     fun setNotification(
-        @RequestParam userId: UUID,
+        @AuthenticationPrincipal loginUser: LoginUser,
         @PathVariable roomId: Long,
         @RequestParam enabled: Boolean,
     ): ApiResponse<DefaultRoomResponse> {
-        chatRoomService.setNotification(userId, roomId, enabled)
+        chatRoomService.setNotification(loginUser.id, roomId, enabled)
         return ApiResponse.success(DefaultRoomResponse(roomId))
     }
 }
