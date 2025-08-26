@@ -11,7 +11,7 @@ interface ChatRoomUserJpaRepository : JpaRepository<ChatRoomUserEntity, ChatRoom
         """
         SELECT cu.id.roomId
         FROM ChatRoomUserEntity cu
-        WHERE cu.id.userId IN (:userId1, :userId2)
+        WHERE cu.id.userId IN (:userId1, :userId2) AND cu.visible = true
         GROUP BY cu.id.roomId
         HAVING COUNT(cu.id.userId) = 2
     """,
