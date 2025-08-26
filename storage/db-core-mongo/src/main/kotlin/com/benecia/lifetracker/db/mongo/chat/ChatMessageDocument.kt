@@ -3,6 +3,8 @@ package com.benecia.lifetracker.db.mongo.chat
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessage
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.Field
+import org.springframework.data.mongodb.core.mapping.FieldType
 import java.util.UUID
 
 @Document(collection = "chat_messages")
@@ -10,8 +12,9 @@ class ChatMessageDocument(
     @Id
     val id: String? = null,
 
-    val roomId: String,
+    val roomId: Long,
 
+    @Field(targetType = FieldType.STRING)
     val senderId: UUID,
 
     val senderName: String,
