@@ -4,7 +4,7 @@ import java.util.UUID
 
 data class ChatMessage(
     val id: String = UUID.randomUUID().toString(),
-    val roomId: String,
+    val roomId: Long,
     val senderId: UUID,
     val senderName: String,
     val content: String,
