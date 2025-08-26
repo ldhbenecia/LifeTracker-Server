@@ -39,13 +39,13 @@ interface ChatRoomJpaRepository : JpaRepository<ChatRoomEntity, Long> {
     SELECT new com.benecia.lifetracker.chat.chatRoom.model.ChatRoomDetailProjection(
     r.id, r.lastMessage, r.lastMessageTime,
     u.id, u.displayName, u.profileImageUrl,
-    cu.notificationEnabled, cu.visible
+    cu_me.notificationEnabled, cu_me.visible
     )
     FROM ChatRoomEntity r
-    JOIN ChatRoomUserEntity cu ON r.id = cu.id.roomId AND cu.id.userId = :userId
-    JOIN ChatRoomUserEntity cu2 ON r.id = cu2.id.roomId AND cu2.id.userId != :userId
-    JOIN UserEntity u ON cu2.id.userId = u.id
-    WHERE r.id = :roomId
+    JOIN ChatRoomUserEntity cu_me ON r.id = cu_me.id.roomId
+    JOIN ChatRoomUserEntity cu_opponent ON r.id = cu_opponent.id.roomId AND cu_opponent.id.userId != :userId
+    JOIN UserEntity u ON cu_opponent.id.userId = u.id
+    WHERE r.id = :roomId AND cu_me.id.userId = :userId
     """,
     )
     fun findRoomDetail(@Param("userId") userId: UUID, @Param("roomId") roomId: Long): ChatRoomDetailProjection?
