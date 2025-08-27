@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ChatMessageRepository {
     fun save(message: ChatMessage): ChatMessage
-    fun findAllByRoomId(roomId: Long): List<ChatMessage>
+    fun findAllByRoomId(roomId: Long, lastMessageTimestamp: Long?, size: Int): List<ChatMessage>
 }

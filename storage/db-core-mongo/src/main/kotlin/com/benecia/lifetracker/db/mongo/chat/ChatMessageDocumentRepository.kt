@@ -2,6 +2,8 @@ package com.benecia.lifetracker.db.mongo.chat
 
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessage
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -14,8 +16,16 @@ class ChatMessageDocumentRepository(
         return saved.toDomain()
     }
 
-    override fun findAllByRoomId(roomId: Long): List<ChatMessage> {
-        return chatMessageJpaRepository.findAllByRoomIdOrderByTimestampAsc(roomId)
-            .map { it.toDomain() }
+    override fun findAllByRoomId(roomId: Long, lastMessageTimestamp: Long?, size: Int): List<ChatMessage> {
+        val sort = Sort.by(Sort.Direction.DESC, "timestamp")
+        val pageable = PageRequest.of(0, size, sort)
+
+        val documents = if (lastMessageTimestamp == null) {
+            chatMessageJpaRepository.findByRoomId(roomId, pageable)
+        } else {
+            chatMessageJpaRepository.findByRoomIdAndTimestampLessThan(roomId, lastMessageTimestamp, pageable)
+        }
+
+        return documents.map { it.toDomain() }.reversed()
     }
 }

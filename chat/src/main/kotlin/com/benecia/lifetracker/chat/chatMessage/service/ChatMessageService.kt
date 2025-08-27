@@ -8,8 +8,8 @@ class ChatMessageService(
     private val chatMessageWriter: ChatMessageWriter,
 ) {
 
-    fun getMessages(roomId: Long): List<ChatMessage> {
-        return chatMessageReader.getMessages(roomId)
+    fun getMessages(roomId: Long, lastMessageTimestamp: Long?, size: Int): List<ChatMessage> {
+        return chatMessageReader.getMessages(roomId, lastMessageTimestamp, size)
     }
 
     fun backupMessage(message: ChatMessage): ChatMessage {
