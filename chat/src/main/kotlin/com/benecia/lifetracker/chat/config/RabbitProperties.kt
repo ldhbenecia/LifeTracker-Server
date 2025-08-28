@@ -9,6 +9,7 @@ class RabbitProperties {
     lateinit var chatQueue: ChatQueue
     lateinit var chatExchange: ChatExchange
     lateinit var chatRouting: ChatRouting
+    lateinit var backupQueue: BackupQueue
 
     class ChatQueue {
         lateinit var name: String
@@ -18,5 +19,8 @@ class RabbitProperties {
     }
     class ChatRouting {
         lateinit var key: String
+    }
+    class BackupQueue {
+        lateinit var name: String
     }
 }

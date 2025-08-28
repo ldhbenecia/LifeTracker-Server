@@ -36,6 +36,19 @@ class RabbitConfig(
     }
 
     @Bean
+    fun backupQueue(): Queue {
+        return Queue(rabbitProperties.backupQueue.name, true)
+    }
+
+    @Bean
+    fun backupBinding(chatExchange: TopicExchange, backupQueue: Queue): Binding {
+        return BindingBuilder
+            .bind(backupQueue)
+            .to(chatExchange)
+            .with(rabbitProperties.chatRouting.key + ".#")
+    }
+
+    @Bean
     fun rabbitTemplate(): RabbitTemplate {
         val template = RabbitTemplate(connectionFactory())
         template.messageConverter = messageConverter()
