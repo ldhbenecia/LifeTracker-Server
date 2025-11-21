@@ -18,7 +18,7 @@ class ChatMessageBackupConsumer(
         try {
             chatMessageService.backupMessage(message)
             chatRoomService.updateLastMessage(message.roomId, message.content)
-            logger.info("비동기 메시지 백업 및 업데이트 성공. Room ID: {}", message.roomId)
+            logger.info("비동기 메시지 백업, 캐시 업데이트 및 채팅방 정보 업데이트 성공. Room ID: {}", message.roomId)
         } catch (e: Exception) {
             logger.error("비동기 메시지 백업 실패. Message: {}", message, e)
         }
