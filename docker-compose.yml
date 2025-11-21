@@ -42,6 +42,21 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis-sent
+    ports:
+      - "6379:6379"
+    networks:
+      - sent-net
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
     container_name: rabbitmq-sent
@@ -87,6 +102,8 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: always
 
   nginx:
@@ -110,6 +127,7 @@ volumes:
   mysql_data:
   rabbitmq_data:
   mongodb_data:
+  redis_data:
 
 networks:
   sent-net:
