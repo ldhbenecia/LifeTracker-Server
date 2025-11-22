@@ -1,6 +1,7 @@
 package com.benecia.lifetracker.chat.chatMessage.service
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChatMessageService(
@@ -12,6 +13,7 @@ class ChatMessageService(
         return chatMessageReader.getMessages(roomId, lastMessageTimestamp, size)
     }
 
+    @Transactional
     fun backupMessage(message: ChatMessage): ChatMessage {
         return chatMessageWriter.backup(message)
     }

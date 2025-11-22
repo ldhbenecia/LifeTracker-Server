@@ -2,7 +2,6 @@ package com.benecia.lifetracker.chat.chatMessage.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class ChatMessageWriter(
@@ -12,7 +11,6 @@ class ChatMessageWriter(
 
     private val logger = LoggerFactory.getLogger(ChatMessageWriter::class.java)
 
-    @Transactional
     fun backup(message: ChatMessage): ChatMessage {
         val savedMessage = chatMessageRepository.save(message)
         logger.info("MongoDB에 메시지 백업 완료. ID: {}", savedMessage.id)
