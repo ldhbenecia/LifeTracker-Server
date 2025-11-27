@@ -1,11 +1,13 @@
 package com.benecia.lifetracker.chat.chatMessage.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
 class ChatCacheRepository(
     private val redisTemplate: RedisTemplate<String, Any>,
+    private val objectMapper: ObjectMapper,
 ) {
 
     private val chatCacheKeyPrefix = "chat:messages:"
@@ -39,6 +41,16 @@ class ChatCacheRepository(
             limit,
         )
 
-        return messageSet?.mapNotNull { it as? ChatMessage } ?: emptyList()
+        return messageSet?.mapNotNull { value ->
+            try {
+                when (value) {
+                    is ChatMessage -> value
+                    is String -> objectMapper.readValue(value, ChatMessage::class.java)
+                    else -> objectMapper.convertValue(value, ChatMessage::class.java)
+                }
+            } catch (e: Exception) {
+                null
+            }
+        } ?: emptyList()
     }
 }
