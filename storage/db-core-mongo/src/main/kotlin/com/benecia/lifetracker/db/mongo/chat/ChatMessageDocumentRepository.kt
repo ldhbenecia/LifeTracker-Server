@@ -28,4 +28,17 @@ class ChatMessageDocumentRepository(
 
         return documents.map { it.toDomain() }.reversed()
     }
+
+    override fun findAllByRoomIdAndTimestampBefore(roomId: Long, timestamp: Long?, limit: Long): List<ChatMessage> {
+        val sort = Sort.by(Sort.Direction.DESC, "timestamp")
+        val pageable = PageRequest.of(0, limit.toInt(), sort)
+
+        val documents = chatMessageJpaRepository.findByRoomIdAndTimestampLessThanEqual(
+            roomId,
+            timestamp,
+            pageable
+        )
+
+        return documents.map { it.toDomain() }
+    }
 }
