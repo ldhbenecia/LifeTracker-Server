@@ -77,4 +77,16 @@ class JwtUtil(
             .parseClaimsJws(token)
             .body
     }
+
+    fun extractExpiration(token: String): Date {
+        return extractAllClaims(token).expiration
+    }
+
+    fun isTokenExpired(token: String): Boolean {
+        return try {
+            extractExpiration(token).before(Date())
+        } catch (e: Exception) {
+            true
+        }
+    }
 }

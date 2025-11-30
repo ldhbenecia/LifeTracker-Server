@@ -1,5 +1,8 @@
 package com.benecia.lifetracker.security.filter
 
+import com.benecia.lifetracker.auth.TokenBlacklistRepository
+import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.user.exception.UserErrorCode
 import com.benecia.lifetracker.util.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -13,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthenticationFilter(
     private val jwtUtil: JwtUtil,
+    private val tokenBlacklistRepository: TokenBlacklistRepository,
 ) : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
@@ -32,6 +36,10 @@ class JwtAuthenticationFilter(
 
         try {
             if (jwtUtil.validateToken(token)) {
+                if (tokenBlacklistRepository.isBlacklisted(token)) {
+                    throw CoreException(UserErrorCode.LOGGED_OUT_TOKEN)
+                }
+
                 val authentication = jwtUtil.getAuthentication(token)
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
@@ -47,6 +55,16 @@ class JwtAuthenticationFilter(
                 authHeader,
             )
             SecurityContextHolder.clearContext()
+
+            when (exception) {
+                is CoreException -> {
+                    log.warn("인증 실패 ({}) : IP={}", exception.errorCode.message, request.remoteAddr)
+                    request.setAttribute("exception", exception)
+                }
+                else -> {
+                    log.debug("JWT 검증 오류: {} | Request: {}", exception.message, request.requestURI)
+                }
+            }
         }
 
         filterChain.doFilter(request, response)
