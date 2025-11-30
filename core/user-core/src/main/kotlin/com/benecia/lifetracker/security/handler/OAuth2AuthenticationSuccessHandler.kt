@@ -30,7 +30,7 @@ class OAuth2AuthenticationSuccessHandler(
 
         try {
             val user = createOrUpdateUser(oAuth2User, registrationId)
-            val accessToken = jwtUtil.generateToken(user.id!!)
+            val accessToken = jwtUtil.generateToken(user.id!!, user.email, user.displayName, user.profileImageUrl)
             val redirectUrl = redirectUrlService.getSuccessRedirectUrl(accessToken)
 
             clearAuthenticationAttributes(request, response)

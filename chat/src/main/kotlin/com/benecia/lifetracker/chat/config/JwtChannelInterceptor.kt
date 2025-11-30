@@ -2,8 +2,6 @@ package com.benecia.lifetracker.chat.config
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.security.userdetails.LoginUser
-import com.benecia.lifetracker.security.userdetails.LoginUserDetailsService
-import com.benecia.lifetracker.security.userdetails.LoginUserPrincipal
 import com.benecia.lifetracker.user.exception.UserErrorCode
 import com.benecia.lifetracker.util.JwtUtil
 import org.springframework.messaging.Message
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component
 @Component
 class JwtChannelInterceptor(
     private val jwtUtil: JwtUtil,
-    private val loginUserDetailsService: LoginUserDetailsService,
 ) : ChannelInterceptor {
 
     override fun preSend(message: Message<*>, channel: MessageChannel): Message<*>? {
@@ -27,11 +24,16 @@ class JwtChannelInterceptor(
                 ?.removePrefix("Bearer ")
                 ?: throw CoreException(UserErrorCode.INVALID_ACCESS_TOKEN)
 
-            val userId = jwtUtil.extractUserId(token)
-            val loginUser = loginUserDetailsService.loadUserByUsername(userId) as LoginUser
+            if (jwtUtil.validateToken(token)) {
+                val authentication = jwtUtil.getAuthentication(token)
+                accessor.user = authentication
 
-            accessor.user = LoginUserPrincipal(loginUser)
-            accessor.sessionAttributes?.put("loginUser", loginUser)
+                if (authentication.principal is LoginUser) {
+                    accessor.sessionAttributes?.put("loginUser", authentication.principal)
+                }
+            } else {
+                throw CoreException(UserErrorCode.INVALID_ACCESS_TOKEN)
+            }
         }
 
         return message
