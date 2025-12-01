@@ -17,6 +17,7 @@ import java.util.UUID
 class JwtUtil(
     @Value("\${jwt.secret}") private val secret: String,
     @Value("\${jwt.expiration}") private val expiration: Long,
+    @Value("\${jwt.refresh-expiration}") private val refreshExpiration: Long,
 ) {
 
     private val key: Key by lazy {
@@ -37,6 +38,15 @@ class JwtUtil(
         }
 
         return builder.compact()
+    }
+
+    fun generateRefreshToken(userId: UUID): String {
+        return Jwts.builder()
+            .setSubject(userId.toString())
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + refreshExpiration))
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
     }
 
     fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
@@ -70,12 +80,8 @@ class JwtUtil(
         }
     }
 
-    private fun extractAllClaims(token: String): Claims {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
+    fun extractUserId(token: String): String {
+        return extractClaim(token, Claims::getSubject)
     }
 
     fun extractExpiration(token: String): Date {
@@ -88,5 +94,20 @@ class JwtUtil(
         } catch (e: Exception) {
             true
         }
+    }
+
+    fun getRefreshExpiration(): Long = refreshExpiration
+
+    private fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
+        val claims = extractAllClaims(token)
+        return claimsResolver(claims)
+    }
+
+    private fun extractAllClaims(token: String): Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .body
     }
 }

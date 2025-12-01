@@ -1,10 +1,12 @@
 package com.benecia.lifetracker.security.handler
 
 import com.benecia.lifetracker.auth.RedirectUrlService
+import com.benecia.lifetracker.auth.RefreshTokenRepository
 import com.benecia.lifetracker.security.HttpCookieOAuth2AuthorizationRequestRepository
 import com.benecia.lifetracker.user.service.User
 import com.benecia.lifetracker.user.service.UserService
 import com.benecia.lifetracker.util.JwtUtil
+import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
@@ -18,6 +20,7 @@ class OAuth2AuthenticationSuccessHandler(
     private val userService: UserService,
     private val redirectUrlService: RedirectUrlService,
     private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository,
+    private val refreshTokenRepository: RefreshTokenRepository,
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
     override fun onAuthenticationSuccess(
@@ -31,8 +34,15 @@ class OAuth2AuthenticationSuccessHandler(
         try {
             val user = createOrUpdateUser(oAuth2User, registrationId)
             val accessToken = jwtUtil.generateToken(user.id!!, user.email, user.displayName, user.profileImageUrl)
-            val redirectUrl = redirectUrlService.getSuccessRedirectUrl(accessToken)
+            val refreshToken = jwtUtil.generateRefreshToken(user.id)
+            refreshTokenRepository.save(
+                user.id,
+                refreshToken,
+                jwtUtil.getRefreshExpiration(),
+            )
+            addRefreshTokenCookie(response, refreshToken)
 
+            val redirectUrl = redirectUrlService.getSuccessRedirectUrl(accessToken)
             clearAuthenticationAttributes(request, response)
             redirectStrategy.sendRedirect(request, response, redirectUrl)
         } catch (e: Exception) {
@@ -40,6 +50,15 @@ class OAuth2AuthenticationSuccessHandler(
             val errorUrl = redirectUrlService.getErrorRedirectUrl("authentication_failed")
             redirectStrategy.sendRedirect(request, response, errorUrl)
         }
+    }
+
+    private fun addRefreshTokenCookie(response: HttpServletResponse, token: String) {
+        val cookie = Cookie("refresh_token", token)
+        cookie.path = "/"
+        cookie.isHttpOnly = true
+        cookie.secure = true
+        cookie.maxAge = (jwtUtil.getRefreshExpiration() / 1000).toInt()
+        response.addCookie(cookie)
     }
 
     private fun createOrUpdateUser(oAuth2User: OAuth2User, registrationId: String): User {
