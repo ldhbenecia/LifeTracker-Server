@@ -1,0 +1,31 @@
+:snippets: ../../../build/generated-snippets
+
+== Auth API
+
+=== Logout
+사용자의 Access Token을 블랙리스트에 등록하고, Refresh Token을 삭제하여 로그아웃 처리합니다.
+
+==== HTTP Request
+include::{snippets}/auth-logout/http-request.adoc[]
+==== Request Headers
+include::{snippets}/auth-logout/request-headers.adoc[]
+==== Request Cookies
+include::{snippets}/auth-logout/request-cookies.adoc[]
+==== HTTP Response
+include::{snippets}/auth-logout/http-response.adoc[]
+==== Response Fields
+include::{snippets}/auth-logout/response-fields.adoc[]
+
+'''
+
+=== Reissue Token
+HttpOnly 쿠키에 담긴 Refresh Token을 검증하여 새로운 Access Token을 발급받습니다.
+
+==== HTTP Request
+include::{snippets}/auth-reissue/http-request.adoc[]
+==== Request Cookies
+include::{snippets}/auth-reissue/request-cookies.adoc[]
+==== HTTP Response
+include::{snippets}/auth-reissue/http-response.adoc[]
+==== Response Fields
+include::{snippets}/auth-reissue/response-fields.adoc[]

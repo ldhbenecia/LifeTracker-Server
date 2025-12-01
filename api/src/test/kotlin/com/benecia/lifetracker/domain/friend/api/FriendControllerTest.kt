@@ -40,10 +40,19 @@ class FriendControllerTest : RestDocsTest() {
         SecurityContextHolder.getContext().authentication = auth
     }
 
+    private fun createLoginUser(userId: UUID): LoginUser {
+        return LoginUser(
+            id = userId,
+            email = "test@test.com",
+            displayName = "테스트유저",
+            profileImageUrl = "https://profile.com/img.png",
+        )
+    }
+
     @Test
     fun addFriend() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -77,7 +86,7 @@ class FriendControllerTest : RestDocsTest() {
     @Test
     fun findAllByUserId() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -86,7 +95,7 @@ class FriendControllerTest : RestDocsTest() {
                 id = 1L,
                 friendId = UUID.randomUUID(),
                 friendDisplayName = "Lim Dong Hyeok",
-                friendProfileImageUrl = "http://img.com/1.png",
+                friendProfileImageUrl = "https://img.com/1.png",
             ),
         )
         every { friendService.findAllByUserId(userId) } returns friendList
@@ -117,7 +126,7 @@ class FriendControllerTest : RestDocsTest() {
     @Test
     fun findPendingRequests() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -126,7 +135,7 @@ class FriendControllerTest : RestDocsTest() {
                 id = 2L,
                 friendId = UUID.randomUUID(),
                 friendDisplayName = "요청자1",
-                friendProfileImageUrl = "http://img.com/2.png",
+                friendProfileImageUrl = "https://img.com/2.png",
             ),
         )
         every { friendService.findPendingRequests(userId) } returns pendingList
@@ -157,7 +166,7 @@ class FriendControllerTest : RestDocsTest() {
     @Test
     fun acceptRequest() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -190,7 +199,7 @@ class FriendControllerTest : RestDocsTest() {
     @Test
     fun rejectRequest() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 

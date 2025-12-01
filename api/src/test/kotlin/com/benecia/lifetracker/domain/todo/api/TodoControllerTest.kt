@@ -47,11 +47,19 @@ class TodoControllerTest : RestDocsTest() {
         SecurityContextHolder.getContext().authentication = auth
     }
 
+    private fun createLoginUser(userId: UUID): LoginUser {
+        return LoginUser(
+            id = userId,
+            email = "test@test.com",
+            displayName = "테스트유저",
+            profileImageUrl = "https://profile.com/img.png",
+        )
+    }
+
     @Test
     fun findTodo() {
         val userId = UUID.randomUUID()
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         val todoId = 1L
 
@@ -157,8 +165,7 @@ class TodoControllerTest : RestDocsTest() {
     @Test
     fun findTodosByMonth() {
         val userId = UUID.randomUUID()
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         // 카테고리 있는 투두
         val categoryInfo = CategoryInfo(
@@ -273,8 +280,7 @@ class TodoControllerTest : RestDocsTest() {
     fun addTodo() {
         val commandSlot = slot<NewTodo>()
         val userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000")
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         every { todoService.addTodo(userId, capture(commandSlot)) } returns 1L
 
@@ -359,8 +365,7 @@ class TodoControllerTest : RestDocsTest() {
     fun modifyTodo() {
         val commandSlot = slot<ModifyTodo>()
         val userId = UUID.randomUUID()
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         val todoId = 1L
 
@@ -454,8 +459,7 @@ class TodoControllerTest : RestDocsTest() {
     @Test
     fun markDone() {
         val userId = UUID.randomUUID()
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         val todoId = 1L
         val done = true
@@ -493,8 +497,7 @@ class TodoControllerTest : RestDocsTest() {
     @Test
     fun removeTodo() {
         val userId = UUID.randomUUID()
-        val email = "test@test.com"
-        val loginUser = LoginUser(userId, email)
+        val loginUser = createLoginUser(userId)
 
         val todoId = 1L
 

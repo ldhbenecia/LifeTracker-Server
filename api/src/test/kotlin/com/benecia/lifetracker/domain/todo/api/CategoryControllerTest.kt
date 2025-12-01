@@ -43,10 +43,19 @@ class CategoryControllerTest : RestDocsTest() {
         SecurityContextHolder.getContext().authentication = auth
     }
 
+    private fun createLoginUser(userId: UUID): LoginUser {
+        return LoginUser(
+            id = userId,
+            email = "test@test.com",
+            displayName = "테스트유저",
+            profileImageUrl = "https://profile.com/img.png",
+        )
+    }
+
     @Test
     fun readCategories() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -82,7 +91,7 @@ class CategoryControllerTest : RestDocsTest() {
     @Test
     fun readCategory() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -118,7 +127,7 @@ class CategoryControllerTest : RestDocsTest() {
     @Test
     fun getCategoryByName() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -155,7 +164,7 @@ class CategoryControllerTest : RestDocsTest() {
     @Test
     fun addCategory() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -197,7 +206,7 @@ class CategoryControllerTest : RestDocsTest() {
     @Test
     fun modifyCategory() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
@@ -242,7 +251,7 @@ class CategoryControllerTest : RestDocsTest() {
     @Test
     fun removeCategory() {
         val userId = UUID.randomUUID()
-        val loginUser = LoginUser(userId, "test@test.com")
+        val loginUser = createLoginUser(userId)
 
         setupAuthentication(loginUser)
 
