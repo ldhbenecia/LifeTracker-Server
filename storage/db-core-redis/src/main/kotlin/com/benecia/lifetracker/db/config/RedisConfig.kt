@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.common.config
+package com.benecia.lifetracker.db.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule

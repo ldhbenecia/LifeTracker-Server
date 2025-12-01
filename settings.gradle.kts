@@ -6,6 +6,7 @@ include(
     "chat",
     "storage:db-core-jpa",
     "storage:db-core-mongo",
+    "storage:db-core-redis",
     "tests:api-docs",
     "core:user-core",
     "core:todo-core",
