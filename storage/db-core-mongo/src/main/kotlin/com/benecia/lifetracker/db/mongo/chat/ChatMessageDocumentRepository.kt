@@ -36,7 +36,7 @@ class ChatMessageDocumentRepository(
         val documents = chatMessageJpaRepository.findByRoomIdAndTimestampLessThanEqual(
             roomId,
             timestamp,
-            pageable
+            pageable,
         )
 
         return documents.map { it.toDomain() }
