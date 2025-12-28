@@ -19,7 +19,12 @@ import java.util.UUID
 
 @Entity
 @SQLRestriction("status = 'ACTIVE'")
-@Table(name = "todo")
+@Table(
+    name = "todo",
+    indexes = [
+        jakarta.persistence.Index(name = "idx_user_todo_date", columnList = "userId, scheduledDate"),
+    ],
+)
 class TodoEntity(
 
     @Id
