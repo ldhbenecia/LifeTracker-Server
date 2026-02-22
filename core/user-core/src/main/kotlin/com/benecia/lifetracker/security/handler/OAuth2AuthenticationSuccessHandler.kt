@@ -42,7 +42,7 @@ class OAuth2AuthenticationSuccessHandler(
             )
             addRefreshTokenCookie(response, refreshToken)
 
-            val redirectUrl = redirectUrlService.getSuccessRedirectUrl(accessToken)
+            val redirectUrl = redirectUrlService.getSuccessRedirectUrl(accessToken, refreshToken)
             clearAuthenticationAttributes(request, response)
             redirectStrategy.sendRedirect(request, response, redirectUrl)
         } catch (e: Exception) {
