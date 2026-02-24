@@ -13,14 +13,17 @@ class FriendAppender(
     private val friendRepository: FriendRepository,
 ) {
     fun add(userId: UUID, command: NewFriend): Long {
-        userReader.findById(command.receiverId)
-        if (friendRepository.exists(userId, command.receiverId)) {
+        val receiver = userReader.findByEmail(command.receiverEmail)
+            ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
+        val receiverId = receiver.id!!
+
+        if (friendRepository.exists(userId, receiverId)) {
             throw CoreException(FriendErrorCode.ALREADY_REQUESTED)
         }
 
         val friend = Friend(
             requesterId = userId,
-            receiverId = command.receiverId,
+            receiverId = receiverId,
             status = FriendStatus.PENDING,
         )
 
