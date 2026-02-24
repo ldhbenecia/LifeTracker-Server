@@ -2,11 +2,13 @@ package com.benecia.lifetracker.db.jpa.user
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.user.exception.FriendErrorCode
+import com.benecia.lifetracker.user.exception.UserErrorCode
 import com.benecia.lifetracker.user.service.Friend
 import com.benecia.lifetracker.user.service.FriendRepository
 import com.benecia.lifetracker.user.service.FriendStatus
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Repository
@@ -45,5 +47,15 @@ class FriendEntityRepository(
             ?: throw CoreException(FriendErrorCode.FRIEND_REQUEST_NOT_FOUND)
         entity.status = status
         return friendJpaRepository.save(entity).id!!
+    }
+
+    @Transactional
+    override fun delete(userId: UUID, friendId: Long) {
+        val entity = friendJpaRepository.findByIdOrNull(friendId)
+            ?: throw CoreException(FriendErrorCode.FRIEND_REQUEST_NOT_FOUND)
+        if (entity.requesterId != userId && entity.receiverId != userId) {
+            throw CoreException(UserErrorCode.FORBIDDEN_USER_ACCESS)
+        }
+        friendJpaRepository.delete(entity)
     }
 }

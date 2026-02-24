@@ -6,6 +6,7 @@ import com.benecia.lifetracker.domain.friend.dto.NewFriendRequest
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.user.service.FriendService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -61,5 +62,14 @@ class FriendController(
     ): ApiResponse<Long> {
         val id = friendService.rejectRequest(loginUser.id, friendRequestId)
         return ApiResponse.success(id)
+    }
+
+    @DeleteMapping("/{friendId}")
+    fun deleteFriend(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable friendId: Long,
+    ): ApiResponse<Nothing> {
+        friendService.delete(loginUser.id, friendId)
+        return ApiResponse.success()
     }
 }

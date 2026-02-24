@@ -11,4 +11,5 @@ interface FriendRepository {
     fun findPendingRequestsByReceiverId(receiverId: UUID): List<Friend>
     fun findFriendRequestById(friendRequestId: Long): Friend
     fun changeFriendRequestStatus(friendRequestId: Long, status: FriendStatus): Long
+    fun delete(userId: UUID, friendId: Long)
 }

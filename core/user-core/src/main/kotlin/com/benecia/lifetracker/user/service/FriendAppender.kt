@@ -47,4 +47,8 @@ class FriendAppender(
 
         return friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.REJECTED)
     }
+
+    fun delete(userId: UUID, friendId: Long) {
+        friendRepository.delete(userId, friendId)
+    }
 }

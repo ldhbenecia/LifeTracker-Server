@@ -29,4 +29,8 @@ class FriendService(
     fun rejectRequest(userId: UUID, friendRequestId: Long): Long {
         return friendAppender.rejectRequest(userId, friendRequestId)
     }
+
+    fun delete(userId: UUID, friendId: Long) {
+        friendAppender.delete(userId, friendId)
+    }
 }
