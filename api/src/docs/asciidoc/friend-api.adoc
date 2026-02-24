@@ -55,3 +55,15 @@ include::{snippets}/rejectFriendRequest/path-parameters.adoc[]
 include::{snippets}/rejectFriendRequest/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/rejectFriendRequest/response-fields.adoc[]
+
+'''
+
+=== Delete Friend
+==== HTTP Request
+include::{snippets}/deleteFriend/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/deleteFriend/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/deleteFriend/http-response.adoc[]
+==== Response Fields
+include::{snippets}/deleteFriend/response-fields.adoc[]
