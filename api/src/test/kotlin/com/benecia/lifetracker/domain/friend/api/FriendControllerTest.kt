@@ -56,7 +56,7 @@ class FriendControllerTest : RestDocsTest() {
 
         setupAuthentication(loginUser)
 
-        val request = NewFriendRequest(receiverId = UUID.randomUUID())
+        val request = NewFriendRequest(receiverEmail = "friend@test.com")
         every { friendService.add(userId, request.toNewFriend()) } returns 10L
 
         given()
@@ -71,7 +71,7 @@ class FriendControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     requestFields(
-                        fieldWithPath("receiverId").type(JsonFieldType.STRING).description("친구로 추가할 유저의 UUID"),
+                        fieldWithPath("receiverEmail").type(JsonFieldType.STRING).description("친구로 추가할 유저의 이메일"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -223,6 +223,39 @@ class FriendControllerTest : RestDocsTest() {
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data").type(JsonFieldType.NUMBER).description("거절된 친구 요청 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+    }
+
+    @Test
+    fun deleteFriend() {
+        val userId = UUID.randomUUID()
+        val loginUser = createLoginUser(userId)
+
+        setupAuthentication(loginUser)
+
+        val friendId = 100L
+        every { friendService.delete(userId, friendId) } returns Unit
+
+        given()
+            .contentType(ContentType.JSON)
+            .delete("/api/v1/friends/{friendId}", friendId)
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "deleteFriend",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    pathParameters(
+                        parameterWithName("friendId").description("삭제할 친구 관계 ID"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
                     ),
                 ),
