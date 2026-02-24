@@ -29,6 +29,10 @@ class UserEntityRepository(
         return entity.toDomain()
     }
 
+    override fun findByEmail(email: String): User? {
+        return userJpaRepository.findByEmail(email)?.toDomain()
+    }
+
     override fun findByProviderAndEmail(provider: String, email: String): User? {
         return userJpaRepository.findByProviderAndEmail(provider, email)?.toDomain()
     }

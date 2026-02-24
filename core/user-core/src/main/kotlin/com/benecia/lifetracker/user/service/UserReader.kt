@@ -20,6 +20,10 @@ class UserReader(
         )
     }
 
+    fun findByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
+    }
+
     fun findByProviderAndEmail(provider: String, email: String): User? {
         return userRepository.findByProviderAndEmail(provider, email)
     }
