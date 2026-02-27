@@ -34,7 +34,7 @@ class ChatRoomController(
         @AuthenticationPrincipal loginUser: LoginUser,
         @RequestParam("opponentId") opponentId: UUID,
     ): ApiResponse<DefaultRoomResponse> {
-        val roomId = chatRoomService.createRoom(loginUser.id, opponentId)
+        val roomId = chatRoomService.findOrCreateRoom(loginUser.id, opponentId)
         return ApiResponse.success(DefaultRoomResponse(roomId))
     }
 

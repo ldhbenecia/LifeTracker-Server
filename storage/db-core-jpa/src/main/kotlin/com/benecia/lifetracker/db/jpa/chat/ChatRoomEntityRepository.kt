@@ -18,7 +18,7 @@ class ChatRoomEntityRepository(
 ) : ChatRoomRepository {
 
     override fun findRoomIdByUserIds(user1Id: UUID, user2Id: UUID): Long? {
-        return chatRoomUserJpaRepository.findRoomIdByUserIds(user1Id, user2Id)
+        return chatRoomUserJpaRepository.findRoomIdByUserIds(user1Id, user2Id).firstOrNull()
     }
 
     override fun findAllRoomsByUserId(userId: UUID): List<ChatRoom> {

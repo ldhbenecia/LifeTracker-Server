@@ -14,7 +14,8 @@ interface ChatRoomUserJpaRepository : JpaRepository<ChatRoomUserEntity, ChatRoom
         WHERE cu.id.userId IN (:userId1, :userId2) AND cu.visible = true
         GROUP BY cu.id.roomId
         HAVING COUNT(cu.id.userId) = 2
+        ORDER BY cu.id.roomId ASC
     """,
     )
-    fun findRoomIdByUserIds(@Param("userId1") userId1: UUID, @Param("userId2") userId2: UUID): Long?
+    fun findRoomIdByUserIds(@Param("userId1") userId1: UUID, @Param("userId2") userId2: UUID): List<Long>
 }
