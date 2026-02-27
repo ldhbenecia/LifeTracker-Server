@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":support:logging"))
     implementation(project(":core:user-core"))
     implementation(project(":core:todo-core"))
+    implementation(project(":core:ledger-core"))
     implementation(project(":storage:db-core-jpa"))
     implementation(project(":storage:db-core-mongo"))
     implementation(project(":storage:db-core-redis"))

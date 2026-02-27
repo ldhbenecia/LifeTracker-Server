@@ -10,6 +10,7 @@ include(
     "tests:api-docs",
     "core:user-core",
     "core:todo-core",
+    "core:ledger-core",
     "support:monitoring",
     "support:logging",
 )
