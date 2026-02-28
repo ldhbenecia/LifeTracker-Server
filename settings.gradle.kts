@@ -11,6 +11,7 @@ include(
     "core:user-core",
     "core:todo-core",
     "core:ledger-core",
+    "core:memo-core",
     "support:monitoring",
     "support:logging",
 )
