@@ -8,4 +8,5 @@ enum class FriendErrorCode(
 ) : ErrorCode {
     ALREADY_REQUESTED(403, "이미 친구 요청을 보냈거나 친구 상태입니다."),
     FRIEND_REQUEST_NOT_FOUND(404, "친구 추가 요청을 찾을 수 없습니다."),
+    CANNOT_CANCEL_REQUEST(400, "대기 중인 요청만 취소할 수 있습니다."),
 }

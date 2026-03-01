@@ -22,6 +22,10 @@ class FriendService(
         return friendReader.findPendingRequests(userId)
     }
 
+    fun findSentRequests(userId: UUID): List<FriendInfo> {
+        return friendReader.findSentRequests(userId)
+    }
+
     fun acceptRequest(userId: UUID, friendRequestId: Long): Long {
         return friendAppender.acceptRequest(userId, friendRequestId)
     }
@@ -30,7 +34,11 @@ class FriendService(
         return friendAppender.rejectRequest(userId, friendRequestId)
     }
 
-    fun delete(userId: UUID, friendId: Long) {
-        friendAppender.delete(userId, friendId)
+    fun cancelRequest(userId: UUID, friendRequestId: Long): Long {
+        return friendAppender.cancelRequest(userId, friendRequestId)
+    }
+
+    fun delete(userId: UUID, friendId: Long): Long {
+        return friendAppender.delete(userId, friendId)
     }
 }

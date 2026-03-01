@@ -18,6 +18,7 @@ class FriendReader(
             FriendInfo(
                 id = it.id!!,
                 friendId = friendId,
+                friendProvider = friendUser.provider,
                 friendDisplayName = friendUser.displayName,
                 friendProfileImageUrl = friendUser.profileImageUrl,
             )
@@ -32,8 +33,24 @@ class FriendReader(
             FriendInfo(
                 id = it.id!!,
                 friendId = requester.id,
+                friendProvider = requester.provider,
                 friendDisplayName = requester.displayName,
                 friendProfileImageUrl = requester.profileImageUrl,
+            )
+        }
+    }
+
+    fun findSentRequests(userId: UUID): List<FriendInfo> {
+        val friends = friendRepository.findPendingRequestsByRequesterId(userId)
+
+        return friends.map {
+            val receiver = userReader.findById(it.receiverId)
+            FriendInfo(
+                id = it.id!!,
+                friendId = receiver.id,
+                friendProvider = receiver.provider,
+                friendDisplayName = receiver.displayName,
+                friendProfileImageUrl = receiver.profileImageUrl,
             )
         }
     }

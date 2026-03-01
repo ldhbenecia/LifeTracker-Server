@@ -48,7 +48,20 @@ class FriendAppender(
         return friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.REJECTED)
     }
 
-    fun delete(userId: UUID, friendId: Long) {
+    fun cancelRequest(userId: UUID, friendRequestId: Long): Long {
+        val request = friendRepository.findFriendRequestById(friendRequestId)
+        if (request.requesterId != userId) {
+            throw CoreException(UserErrorCode.FORBIDDEN_USER_ACCESS)
+        }
+        if (request.status != FriendStatus.PENDING) {
+            throw CoreException(FriendErrorCode.CANNOT_CANCEL_REQUEST)
+        }
+        friendRepository.delete(userId, friendRequestId)
+        return friendRequestId
+    }
+
+    fun delete(userId: UUID, friendId: Long): Long {
         friendRepository.delete(userId, friendId)
+        return friendId
     }
 }
