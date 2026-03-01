@@ -94,6 +94,7 @@ class FriendControllerTest : RestDocsTest() {
             FriendInfo(
                 id = 1L,
                 friendId = UUID.randomUUID(),
+                friendProvider = "google",
                 friendDisplayName = "Lim Dong Hyeok",
                 friendProfileImageUrl = "https://img.com/1.png",
             ),
@@ -115,6 +116,7 @@ class FriendControllerTest : RestDocsTest() {
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("친구 요청 ID"),
                         fieldWithPath("data[].friendId").type(JsonFieldType.STRING).description("친구의 UUID"),
+                        fieldWithPath("data[].friendProvider").type(JsonFieldType.STRING).description("친구의 OAuth 프로바이더"),
                         fieldWithPath("data[].friendDisplayName").type(JsonFieldType.STRING).description("친구 이름"),
                         fieldWithPath("data[].friendProfileImageUrl").type(JsonFieldType.STRING).description("친구 프로필 이미지 URL").optional(),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
@@ -134,6 +136,7 @@ class FriendControllerTest : RestDocsTest() {
             FriendInfo(
                 id = 2L,
                 friendId = UUID.randomUUID(),
+                friendProvider = "kakao",
                 friendDisplayName = "요청자1",
                 friendProfileImageUrl = "https://img.com/2.png",
             ),
@@ -155,8 +158,51 @@ class FriendControllerTest : RestDocsTest() {
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("친구 요청 ID"),
                         fieldWithPath("data[].friendId").type(JsonFieldType.STRING).description("요청자 UUID"),
+                        fieldWithPath("data[].friendProvider").type(JsonFieldType.STRING).description("요청자의 OAuth 프로바이더"),
                         fieldWithPath("data[].friendDisplayName").type(JsonFieldType.STRING).description("요청자 이름"),
                         fieldWithPath("data[].friendProfileImageUrl").type(JsonFieldType.STRING).description("요청자 프로필 이미지 URL").optional(),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+    }
+
+    @Test
+    fun findSentRequests() {
+        val userId = UUID.randomUUID()
+        val loginUser = createLoginUser(userId)
+
+        setupAuthentication(loginUser)
+
+        val sentList = listOf(
+            FriendInfo(
+                id = 3L,
+                friendId = UUID.randomUUID(),
+                friendProvider = "naver",
+                friendDisplayName = "수신자1",
+                friendProfileImageUrl = "https://img.com/3.png",
+            ),
+        )
+        every { friendService.findSentRequests(userId) } returns sentList
+
+        given()
+            .contentType(ContentType.JSON)
+            .get("/api/v1/friends/requests/sent")
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "findSentFriendRequests",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("친구 요청 ID"),
+                        fieldWithPath("data[].friendId").type(JsonFieldType.STRING).description("수신자 UUID"),
+                        fieldWithPath("data[].friendProvider").type(JsonFieldType.STRING).description("수신자의 OAuth 프로바이더"),
+                        fieldWithPath("data[].friendDisplayName").type(JsonFieldType.STRING).description("수신자 이름"),
+                        fieldWithPath("data[].friendProfileImageUrl").type(JsonFieldType.STRING).description("수신자 프로필 이미지 URL").optional(),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
                     ),
                 ),
@@ -237,7 +283,7 @@ class FriendControllerTest : RestDocsTest() {
         setupAuthentication(loginUser)
 
         val friendId = 100L
-        every { friendService.delete(userId, friendId) } returns Unit
+        every { friendService.delete(userId, friendId) } returns friendId
 
         given()
             .contentType(ContentType.JSON)
@@ -255,7 +301,40 @@ class FriendControllerTest : RestDocsTest() {
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                        fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)"),
+                        fieldWithPath("data").type(JsonFieldType.NUMBER).description("삭제된 친구 관계 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+    }
+
+    @Test
+    fun cancelRequest() {
+        val userId = UUID.randomUUID()
+        val loginUser = createLoginUser(userId)
+
+        setupAuthentication(loginUser)
+
+        val friendRequestId = 100L
+        every { friendService.cancelRequest(userId, friendRequestId) } returns friendRequestId
+
+        given()
+            .contentType(ContentType.JSON)
+            .delete("/api/v1/friends/requests/{friendRequestId}", friendRequestId)
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "cancelFriendRequest",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    pathParameters(
+                        parameterWithName("friendRequestId").description("취소할 친구 요청 ID"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data").type(JsonFieldType.NUMBER).description("취소된 친구 요청 ID"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
                     ),
                 ),

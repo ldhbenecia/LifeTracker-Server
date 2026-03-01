@@ -57,7 +57,7 @@ class UserControllerTest : RestDocsTest() {
 
         val userInfo = UserInfo(
             id = userId,
-            provider = "GOOGLE",
+            provider = "google",
             email = "test@test.com",
             displayName = "테스트유저",
             profileImageUrl = "https://profile.com/img.png",
@@ -101,7 +101,7 @@ class UserControllerTest : RestDocsTest() {
 
         val user = User(
             id = UUID.randomUUID(),
-            provider = "GOOGLE",
+            provider = "google",
             email = "friend@test.com",
             displayName = "친구유저",
             profileImageUrl = "https://profile.com/friend.png",

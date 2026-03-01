@@ -34,6 +34,16 @@ include::{snippets}/findPendingFriendRequests/response-fields.adoc[]
 
 '''
 
+=== Find Sent Friend Requests
+==== HTTP Request
+include::{snippets}/findSentFriendRequests/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/findSentFriendRequests/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findSentFriendRequests/response-fields.adoc[]
+
+'''
+
 === Accept Friend Request
 ==== HTTP Request
 include::{snippets}/acceptFriendRequest/http-request.adoc[]
@@ -55,6 +65,18 @@ include::{snippets}/rejectFriendRequest/path-parameters.adoc[]
 include::{snippets}/rejectFriendRequest/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/rejectFriendRequest/response-fields.adoc[]
+
+'''
+
+=== Cancel Friend Request
+==== HTTP Request
+include::{snippets}/cancelFriendRequest/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/cancelFriendRequest/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/cancelFriendRequest/http-response.adoc[]
+==== Response Fields
+include::{snippets}/cancelFriendRequest/response-fields.adoc[]
 
 '''
 
