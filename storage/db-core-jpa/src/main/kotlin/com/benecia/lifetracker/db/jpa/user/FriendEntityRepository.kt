@@ -36,6 +36,11 @@ class FriendEntityRepository(
             .map { it.toDomain() }
     }
 
+    override fun findPendingRequestsByRequesterId(requesterId: UUID): List<Friend> {
+        return friendJpaRepository.findAllByRequesterIdAndStatus(requesterId, FriendStatus.PENDING)
+            .map { it.toDomain() }
+    }
+
     override fun findFriendRequestById(friendRequestId: Long): Friend {
         return friendJpaRepository.findByIdOrNull(friendRequestId)
             ?.toDomain()
