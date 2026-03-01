@@ -8,4 +8,5 @@ data class User(
     val email: String,
     val displayName: String,
     val profileImageUrl: String?,
+    val userCode: String = "",
 )

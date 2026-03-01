@@ -25,4 +25,8 @@ class UserService(
     fun findByProviderAndEmail(provider: String, email: String): User? {
         return userReader.findByProviderAndEmail(provider, email)
     }
+
+    fun findByUserCode(userCode: String): User? {
+        return userReader.findByUserCode(userCode)
+    }
 }

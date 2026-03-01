@@ -14,4 +14,5 @@ enum class UserErrorCode(
     EXPIRED_REFRESH_TOKEN(401, "리프레시 토큰이 만료되었습니다. 다시 로그인해주세요."),
     INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다. (변조되거나 로그아웃됨)"),
     REFRESH_TOKEN_NOT_FOUND(400, "리프레시 토큰이 존재하지 않습니다."),
+    USER_CODE_GENERATION_FAILED(500, "유저 코드 생성에 실패했습니다."),
 }

@@ -9,6 +9,7 @@ data class UserInfo(
     val email: String,
     val displayName: String,
     val profileImageUrl: String?,
+    val userCode: String,
 ) {
     fun toUser(): User = User(
         id = this.id,
@@ -16,5 +17,6 @@ data class UserInfo(
         email = this.email,
         displayName = this.displayName,
         profileImageUrl = this.profileImageUrl,
+        userCode = this.userCode,
     )
 }

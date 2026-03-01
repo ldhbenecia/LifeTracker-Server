@@ -10,4 +10,5 @@ interface UserRepository {
     fun findById(id: UUID): User
     fun findByEmail(email: String): User?
     fun findByProviderAndEmail(provider: String, email: String): User?
+    fun findByUserCode(userCode: String): User?
 }
