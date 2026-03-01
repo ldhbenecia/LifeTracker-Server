@@ -6,6 +6,7 @@ import java.util.UUID
 data class FriendResponse(
     val id: Long,
     val friendId: UUID,
+    val friendProvider: String,
     val friendDisplayName: String,
     val friendProfileImageUrl: String?,
 ) {
@@ -14,6 +15,7 @@ data class FriendResponse(
             return FriendResponse(
                 id = info.id,
                 friendId = info.friendId,
+                friendProvider = info.friendProvider,
                 friendDisplayName = info.friendDisplayName,
                 friendProfileImageUrl = info.friendProfileImageUrl,
             )

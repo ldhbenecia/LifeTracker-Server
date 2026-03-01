@@ -46,6 +46,15 @@ class FriendController(
         return ApiResponse.success(responseList)
     }
 
+    @GetMapping("/requests/sent")
+    fun findSentRequests(
+        @AuthenticationPrincipal loginUser: LoginUser,
+    ): ApiResponse<List<FriendResponse>> {
+        val requests = friendService.findSentRequests(loginUser.id)
+        val responseList = requests.map { FriendResponse.of(it) }
+        return ApiResponse.success(responseList)
+    }
+
     @PostMapping("/{friendRequestId}/accept")
     fun acceptRequest(
         @AuthenticationPrincipal loginUser: LoginUser,
@@ -64,12 +73,21 @@ class FriendController(
         return ApiResponse.success(id)
     }
 
+    @DeleteMapping("/requests/{friendRequestId}")
+    fun cancelRequest(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @PathVariable friendRequestId: Long,
+    ): ApiResponse<Long> {
+        val id = friendService.cancelRequest(loginUser.id, friendRequestId)
+        return ApiResponse.success(id)
+    }
+
     @DeleteMapping("/{friendId}")
     fun deleteFriend(
         @AuthenticationPrincipal loginUser: LoginUser,
         @PathVariable friendId: Long,
-    ): ApiResponse<Nothing> {
-        friendService.delete(loginUser.id, friendId)
-        return ApiResponse.success()
+    ): ApiResponse<Long> {
+        val id = friendService.delete(loginUser.id, friendId)
+        return ApiResponse.success(id)
     }
 }
