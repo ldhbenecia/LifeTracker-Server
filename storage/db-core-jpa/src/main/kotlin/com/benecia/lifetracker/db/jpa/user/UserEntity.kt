@@ -30,6 +30,9 @@ class UserEntity(
     @Column(nullable = false)
     var profileImageUrl: String?,
 
+    @Column(nullable = false, unique = true, length = 8)
+    val userCode: String,
+
 ) : BaseEntity() {
 
     fun toDomain(): User = User(
@@ -38,5 +41,6 @@ class UserEntity(
         email = this.email,
         displayName = this.displayName,
         profileImageUrl = this.profileImageUrl,
+        userCode = this.userCode,
     )
 }

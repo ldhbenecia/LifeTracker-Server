@@ -6,4 +6,6 @@ import java.util.UUID
 interface UserJpaRepository : JpaRepository<UserEntity, UUID> {
     fun findByProviderAndEmail(provider: String, email: String): UserEntity?
     fun findByEmail(email: String): UserEntity?
+    fun findByUserCode(userCode: String): UserEntity?
+    fun existsByUserCode(userCode: String): Boolean
 }

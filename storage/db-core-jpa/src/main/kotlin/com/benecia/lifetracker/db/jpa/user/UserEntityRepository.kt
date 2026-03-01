@@ -19,6 +19,7 @@ class UserEntityRepository(
             email = user.email,
             displayName = user.displayName,
             profileImageUrl = user.profileImageUrl,
+            userCode = generateUniqueUserCode(),
         )
         return userJpaRepository.save(entity).id!!
     }
@@ -37,13 +38,24 @@ class UserEntityRepository(
         return userJpaRepository.findByProviderAndEmail(provider, email)?.toDomain()
     }
 
+    override fun findByUserCode(userCode: String): User? {
+        return userJpaRepository.findByUserCode(userCode)?.toDomain()
+    }
+
     override fun update(user: User): User {
         val entity = userJpaRepository.findByIdOrNull(user.id!!)
             ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
-
         entity.displayName = user.displayName
         entity.profileImageUrl = user.profileImageUrl
-
         return entity.toDomain()
+    }
+
+    private fun generateUniqueUserCode(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        repeat(10) {
+            val code = (1..8).map { chars.random() }.joinToString("")
+            if (!userJpaRepository.existsByUserCode(code)) return code
+        }
+        throw CoreException(UserErrorCode.USER_CODE_GENERATION_FAILED)
     }
 }
