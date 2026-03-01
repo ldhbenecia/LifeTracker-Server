@@ -3,8 +3,8 @@ package com.benecia.lifetracker.domain.user.api
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.common.response.ApiResponse
 import com.benecia.lifetracker.domain.user.dto.UserResponse
+import com.benecia.lifetracker.domain.user.dto.UserSearchResponse
 import com.benecia.lifetracker.user.exception.UserErrorCode
-import com.benecia.lifetracker.user.model.info.UserInfo
 import com.benecia.lifetracker.user.service.UserService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,20 +27,11 @@ class UserController(
     }
 
     @GetMapping("/search")
-    fun findUserByProviderAndEmail(
-        @RequestParam provider: String,
-        @RequestParam email: String,
-    ): ApiResponse<UserResponse> {
-        val user = userService.findByProviderAndEmail(provider, email)
-        val userInfo = user?.let {
-            UserInfo(
-                id = it.id!!,
-                provider = it.provider,
-                email = it.email,
-                displayName = it.displayName,
-                profileImageUrl = it.profileImageUrl,
-            )
-        } ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
-        return ApiResponse.success(UserResponse.of(userInfo))
+    fun searchByUserCode(
+        @RequestParam code: String,
+    ): ApiResponse<UserSearchResponse> {
+        val user = userService.findByUserCode(code)
+            ?: throw CoreException(UserErrorCode.USER_NOT_FOUND)
+        return ApiResponse.success(UserSearchResponse.of(user))
     }
 }

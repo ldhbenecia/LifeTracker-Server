@@ -1,0 +1,25 @@
+:snippets: ../../../build/generated-snippets
+
+== User API
+
+=== Find User by ID
+==== HTTP Request
+include::{snippets}/findUserById/http-request.adoc[]
+==== Path Parameters
+include::{snippets}/findUserById/path-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/findUserById/http-response.adoc[]
+==== Response Fields
+include::{snippets}/findUserById/response-fields.adoc[]
+
+'''
+
+=== Search User by Code
+==== HTTP Request
+include::{snippets}/searchUserByCode/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/searchUserByCode/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/searchUserByCode/http-response.adoc[]
+==== Response Fields
+include::{snippets}/searchUserByCode/response-fields.adoc[]

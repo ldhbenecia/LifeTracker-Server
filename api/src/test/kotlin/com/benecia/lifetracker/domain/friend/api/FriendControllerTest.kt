@@ -56,7 +56,7 @@ class FriendControllerTest : RestDocsTest() {
 
         setupAuthentication(loginUser)
 
-        val request = NewFriendRequest(receiverEmail = "friend@test.com")
+        val request = NewFriendRequest(receiverCode = "ABCD1234")
         every { friendService.add(userId, request.toNewFriend()) } returns 10L
 
         given()
@@ -71,7 +71,7 @@ class FriendControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     requestFields(
-                        fieldWithPath("receiverEmail").type(JsonFieldType.STRING).description("친구로 추가할 유저의 이메일"),
+                        fieldWithPath("receiverCode").type(JsonFieldType.STRING).description("친구로 추가할 유저의 코드"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),

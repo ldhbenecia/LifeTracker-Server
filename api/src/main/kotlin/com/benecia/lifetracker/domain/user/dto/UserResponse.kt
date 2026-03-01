@@ -9,6 +9,7 @@ data class UserResponse(
     val email: String,
     val displayName: String,
     val profileImageUrl: String?,
+    val userCode: String,
 ) {
     companion object {
         fun of(info: UserInfo) = UserResponse(
@@ -17,6 +18,7 @@ data class UserResponse(
             email = info.email,
             displayName = info.displayName,
             profileImageUrl = info.profileImageUrl,
+            userCode = info.userCode,
         )
     }
 }

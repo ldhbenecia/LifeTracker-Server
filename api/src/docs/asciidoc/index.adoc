@@ -12,6 +12,7 @@
 This is the Core API documentation.
 
 include::auth-api.adoc[]
+include::user-api.adoc[]
 include::todo-api.adoc[]
 include::friend-api.adoc[]
 include::category-api.adoc[]
