@@ -7,6 +7,7 @@ import com.benecia.lifetracker.domain.todo.dto.ModifyTodoResponse
 import com.benecia.lifetracker.domain.todo.dto.NewTodoRequest
 import com.benecia.lifetracker.domain.todo.dto.NewTodoResponse
 import com.benecia.lifetracker.domain.todo.dto.TodoResponse
+import com.benecia.lifetracker.domain.todo.dto.TodoStatisticsResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import com.benecia.lifetracker.todocore.service.TodoService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -81,5 +82,15 @@ class TodoController(
     ): ApiResponse<DeleteTodoResponse> {
         val todoId = todoService.removeTodo(loginUser.id, id)
         return ApiResponse.success(DeleteTodoResponse(todoId))
+    }
+
+    @GetMapping("/statistics")
+    fun getMonthlyStatistics(
+        @AuthenticationPrincipal loginUser: LoginUser,
+        @RequestParam year: Int,
+        @RequestParam month: Int,
+    ): ApiResponse<TodoStatisticsResponse> {
+        val stats = todoService.getMonthlyStatistics(loginUser.id, year, month)
+        return ApiResponse.success(TodoStatisticsResponse.of(stats))
     }
 }
