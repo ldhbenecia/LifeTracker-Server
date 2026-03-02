@@ -2,7 +2,9 @@ package com.benecia.lifetracker.todocore.service
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.todocore.exception.TodoErrorCode
+import com.benecia.lifetracker.todocore.model.info.CategoryStatisticsInfo
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
+import com.benecia.lifetracker.todocore.model.info.TodoStatisticsInfo
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.util.UUID
@@ -55,5 +57,39 @@ data class TodoReader(
                 isDone = todo.isDone,
             )
         }
+    }
+
+    fun getMonthlyStatistics(
+        userId: UUID,
+        year: Int,
+        month: Int,
+    ): TodoStatisticsInfo {
+        val start = LocalDate.of(year, month, 1)
+        val end = start.withDayOfMonth(start.lengthOfMonth())
+        val todos = todoRepository.findByUserIdAndScheduledDateRange(userId, start, end)
+
+        val categoryIds = todos.mapNotNull { it.categoryId }.distinct()
+        val categoryMap = categoryReader.findByUserIdAndIds(userId, categoryIds).associateBy { it.id }
+
+        val totalCount = todos.size
+        val doneCount = todos.count { it.isDone }
+
+        val categoryBreakdown = todos.groupBy { it.categoryId }.map { (categoryId, todosInGroup) ->
+            CategoryStatisticsInfo(
+                categoryId = categoryId,
+                categoryName = categoryId?.let { categoryMap[it]?.name },
+                totalCount = todosInGroup.size,
+                doneCount = todosInGroup.count { it.isDone },
+            )
+        }
+
+        return TodoStatisticsInfo(
+            year = year,
+            month = month,
+            totalCount = totalCount,
+            doneCount = doneCount,
+            pendingCount = totalCount - doneCount,
+            categoryBreakdown = categoryBreakdown,
+        )
     }
 }

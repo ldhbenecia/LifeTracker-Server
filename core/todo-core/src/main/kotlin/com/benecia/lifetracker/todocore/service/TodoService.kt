@@ -3,6 +3,7 @@ package com.benecia.lifetracker.todocore.service
 import com.benecia.lifetracker.todocore.model.command.ModifyTodo
 import com.benecia.lifetracker.todocore.model.command.NewTodo
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
+import com.benecia.lifetracker.todocore.model.info.TodoStatisticsInfo
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -37,5 +38,13 @@ class TodoService(
 
     fun removeTodo(userId: UUID, id: Long): Long {
         return todoWriter.remove(userId, id)
+    }
+
+    fun getMonthlyStatistics(
+        userId: UUID,
+        year: Int,
+        month: Int,
+    ): TodoStatisticsInfo {
+        return todoReader.getMonthlyStatistics(userId, year, month)
     }
 }
