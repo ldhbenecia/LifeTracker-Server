@@ -7,7 +7,9 @@ import com.benecia.lifetracker.test.api.RestDocsUtils.responsePreprocessor
 import com.benecia.lifetracker.todocore.model.command.ModifyTodo
 import com.benecia.lifetracker.todocore.model.command.NewTodo
 import com.benecia.lifetracker.todocore.model.info.CategoryInfo
+import com.benecia.lifetracker.todocore.model.info.CategoryStatisticsInfo
 import com.benecia.lifetracker.todocore.model.info.TodoInfo
+import com.benecia.lifetracker.todocore.model.info.TodoStatisticsInfo
 import com.benecia.lifetracker.todocore.service.TodoService
 import io.mockk.every
 import io.mockk.mockk
@@ -521,6 +523,69 @@ class TodoControllerTest : RestDocsTest() {
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                         fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("삭제된 할 일 ID"),
+                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
+                    ),
+                ),
+            )
+    }
+
+    @Test
+    fun getMonthlyStatistics() {
+        val userId = UUID.randomUUID()
+        val loginUser = createLoginUser(userId)
+
+        val stats = TodoStatisticsInfo(
+            year = 2026,
+            month = 3,
+            totalCount = 10,
+            doneCount = 7,
+            pendingCount = 3,
+            categoryBreakdown = listOf(
+                CategoryStatisticsInfo(
+                    categoryId = 1L,
+                    categoryName = "개발",
+                    totalCount = 6,
+                    doneCount = 5,
+                ),
+                CategoryStatisticsInfo(
+                    categoryId = null,
+                    categoryName = null,
+                    totalCount = 4,
+                    doneCount = 2,
+                ),
+            ),
+        )
+        every { todoService.getMonthlyStatistics(userId, 2026, 3) } returns stats
+
+        setupAuthentication(loginUser)
+        given()
+            .contentType(ContentType.JSON)
+            .queryParam("year", 2026)
+            .queryParam("month", 3)
+            .get("/api/v1/todos/statistics")
+            .then()
+            .status(HttpStatus.OK)
+            .apply(
+                document(
+                    "getTodoStatistics",
+                    requestPreprocessor(),
+                    responsePreprocessor(),
+                    queryParameters(
+                        parameterWithName("year").description("조회 연도"),
+                        parameterWithName("month").description("조회 월"),
+                    ),
+                    responseFields(
+                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                        fieldWithPath("data.year").type(JsonFieldType.NUMBER).description("조회 연도"),
+                        fieldWithPath("data.month").type(JsonFieldType.NUMBER).description("조회 월"),
+                        fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER).description("전체 할 일 수"),
+                        fieldWithPath("data.doneCount").type(JsonFieldType.NUMBER).description("완료된 할 일 수"),
+                        fieldWithPath("data.pendingCount").type(JsonFieldType.NUMBER).description("미완료 할 일 수"),
+                        fieldWithPath("data.categoryBreakdown[].categoryId").type(JsonFieldType.NUMBER).description("카테고리 ID (미분류는 null)").optional(),
+                        fieldWithPath("data.categoryBreakdown[].categoryName").type(JsonFieldType.STRING).description("카테고리 이름 (미분류는 null)").optional(),
+                        fieldWithPath("data.categoryBreakdown[].totalCount").type(JsonFieldType.NUMBER).description("카테고리별 전체 할 일 수"),
+                        fieldWithPath("data.categoryBreakdown[].doneCount").type(JsonFieldType.NUMBER).description("카테고리별 완료된 할 일 수"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
                     ),
                 ),

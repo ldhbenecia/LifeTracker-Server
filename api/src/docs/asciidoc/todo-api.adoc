@@ -95,3 +95,15 @@ include::{snippets}/removeTodo/path-parameters.adoc[]
 include::{snippets}/removeTodo/http-response.adoc[]
 ==== Response Fields
 include::{snippets}/removeTodo/response-fields.adoc[]
+
+---
+
+=== Get Monthly Statistics
+==== HTTP Request
+include::{snippets}/getTodoStatistics/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/getTodoStatistics/query-parameters.adoc[]
+==== HTTP Response
+include::{snippets}/getTodoStatistics/http-response.adoc[]
+==== Response Fields
+include::{snippets}/getTodoStatistics/response-fields.adoc[]
