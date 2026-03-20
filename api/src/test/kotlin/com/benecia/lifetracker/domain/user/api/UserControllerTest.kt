@@ -61,7 +61,7 @@ class UserControllerTest : RestDocsTest() {
             email = "test@test.com",
             displayName = "테스트유저",
             profileImageUrl = "https://profile.com/img.png",
-            userCode = "ABCD1234",
+            userCode = "d87690f5-8a73-48af-b488-6d0ebc85ff1c",
         )
         every { userService.findById(userId) } returns userInfo
 
@@ -86,7 +86,7 @@ class UserControllerTest : RestDocsTest() {
                         fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
                         fieldWithPath("data.displayName").type(JsonFieldType.STRING).description("표시 이름"),
                         fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL").optional(),
-                        fieldWithPath("data.userCode").type(JsonFieldType.STRING).description("유저 코드 (8자리 영숫자)"),
+                        fieldWithPath("data.userCode").type(JsonFieldType.STRING).description("유저 코드 (UUID 형식)"),
                         fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 생성 시간"),
                     ),
                 ),
@@ -105,13 +105,13 @@ class UserControllerTest : RestDocsTest() {
             email = "friend@test.com",
             displayName = "친구유저",
             profileImageUrl = "https://profile.com/friend.png",
-            userCode = "XYZW5678",
+            userCode = "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         )
-        every { userService.findByUserCode("XYZW5678") } returns user
+        every { userService.findByUserCode("a1b2c3d4-e5f6-7890-abcd-ef1234567890") } returns user
 
         given()
             .contentType(ContentType.JSON)
-            .queryParam("code", "XYZW5678")
+            .queryParam("code", "a1b2c3d4-e5f6-7890-abcd-ef1234567890")
             .get("/api/v1/users/search")
             .then()
             .status(HttpStatus.OK)
@@ -121,7 +121,7 @@ class UserControllerTest : RestDocsTest() {
                     requestPreprocessor(),
                     responsePreprocessor(),
                     queryParameters(
-                        parameterWithName("code").description("검색할 유저 코드 (8자리 영숫자)"),
+                        parameterWithName("code").description("검색할 유저 코드 (UUID 형식)"),
                     ),
                     responseFields(
                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
