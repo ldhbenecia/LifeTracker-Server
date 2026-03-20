@@ -30,7 +30,7 @@ class UserEntity(
     @Column(nullable = false)
     var profileImageUrl: String?,
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(nullable = false, unique = true, length = 36)
     val userCode: String,
 
 ) : BaseEntity() {
