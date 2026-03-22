@@ -18,4 +18,16 @@ interface ChatRoomUserJpaRepository : JpaRepository<ChatRoomUserEntity, ChatRoom
     """,
     )
     fun findRoomIdByUserIds(@Param("userId1") userId1: UUID, @Param("userId2") userId2: UUID): List<Long>
+
+    @Query(
+        """
+        SELECT cu.id.userId
+        FROM ChatRoomUserEntity cu
+        WHERE cu.id.roomId = :roomId
+          AND cu.id.userId != :senderId
+          AND cu.notificationEnabled = true
+          AND cu.visible = true
+    """,
+    )
+    fun findNotificationTargets(@Param("roomId") roomId: Long, @Param("senderId") senderId: UUID): List<UUID>
 }
