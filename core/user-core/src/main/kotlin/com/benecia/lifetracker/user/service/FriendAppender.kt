@@ -1,9 +1,12 @@
 package com.benecia.lifetracker.user.service
 
 import com.benecia.lifetracker.common.exception.CoreException
+import com.benecia.lifetracker.user.event.FriendRequestAcceptedEvent
+import com.benecia.lifetracker.user.event.FriendRequestSentEvent
 import com.benecia.lifetracker.user.exception.FriendErrorCode
 import com.benecia.lifetracker.user.exception.UserErrorCode
 import com.benecia.lifetracker.user.model.command.NewFriend
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import java.util.UUID
 
@@ -11,6 +14,7 @@ import java.util.UUID
 class FriendAppender(
     private val userReader: UserReader,
     private val friendRepository: FriendRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun add(userId: UUID, command: NewFriend): Long {
         val receiver = userReader.findByUserCode(command.receiverCode)
@@ -27,7 +31,9 @@ class FriendAppender(
             status = FriendStatus.PENDING,
         )
 
-        return friendRepository.add(friend)
+        val friendRequestId = friendRepository.add(friend)
+        eventPublisher.publishEvent(FriendRequestSentEvent(friendRequestId, userId, receiverId))
+        return friendRequestId
     }
 
     fun acceptRequest(userId: UUID, friendRequestId: Long): Long {
@@ -36,7 +42,9 @@ class FriendAppender(
             throw CoreException(UserErrorCode.USER_NOT_FOUND)
         }
 
-        return friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.ACCEPTED)
+        val result = friendRepository.changeFriendRequestStatus(friendRequestId, FriendStatus.ACCEPTED)
+        eventPublisher.publishEvent(FriendRequestAcceptedEvent(friendRequestId, request.requesterId, userId))
+        return result
     }
 
     fun rejectRequest(userId: UUID, friendRequestId: Long): Long {
