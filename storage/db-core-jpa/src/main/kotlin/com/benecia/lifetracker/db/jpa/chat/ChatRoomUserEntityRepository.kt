@@ -29,4 +29,8 @@ class ChatRoomUserEntityRepository(
         chatRoomUserJpaRepository.save(user)
         return roomId
     }
+
+    override fun findNotificationTargets(roomId: Long, senderId: UUID): List<UUID> {
+        return chatRoomUserJpaRepository.findNotificationTargets(roomId, senderId)
+    }
 }

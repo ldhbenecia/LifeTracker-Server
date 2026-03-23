@@ -6,6 +6,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
@@ -50,5 +51,9 @@ class TodoEntityRepository(
         val entity = todoJpaRepository.findByIdOrNull(id) ?: return null
         entity.remove()
         return todoJpaRepository.save(entity).id
+    }
+
+    override fun findAllByNotificationTimeBetween(start: LocalDateTime, end: LocalDateTime): List<Todo> {
+        return todoJpaRepository.findAllByNotificationTimeBetween(start, end).map { it.toDomain() }
     }
 }
