@@ -1,0 +1,25 @@
+:snippets: ../../../build/generated-snippets
+
+== FCM API
+
+=== Register FCM Token
+==== HTTP Request
+include::{snippets}/registerFcmToken/http-request.adoc[]
+==== Request Fields
+include::{snippets}/registerFcmToken/request-fields.adoc[]
+==== HTTP Response
+include::{snippets}/registerFcmToken/http-response.adoc[]
+==== Response Fields
+include::{snippets}/registerFcmToken/response-fields.adoc[]
+
+'''
+
+=== Unregister FCM Token
+==== HTTP Request
+include::{snippets}/unregisterFcmToken/http-request.adoc[]
+==== Request Fields
+include::{snippets}/unregisterFcmToken/request-fields.adoc[]
+==== HTTP Response
+include::{snippets}/unregisterFcmToken/http-response.adoc[]
+==== Response Fields
+include::{snippets}/unregisterFcmToken/response-fields.adoc[]

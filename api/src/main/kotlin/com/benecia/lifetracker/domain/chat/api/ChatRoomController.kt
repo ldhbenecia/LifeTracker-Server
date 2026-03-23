@@ -1,9 +1,9 @@
 package com.benecia.lifetracker.domain.chat.api
 
-import com.benecia.lifetracker.domain.chat.dto.DefaultRoomResponse
 import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomSummary
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomService
 import com.benecia.lifetracker.common.response.ApiResponse
+import com.benecia.lifetracker.domain.chat.dto.DefaultRoomResponse
 import com.benecia.lifetracker.security.userdetails.LoginUser
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping

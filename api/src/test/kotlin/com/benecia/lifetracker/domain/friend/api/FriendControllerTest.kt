@@ -56,7 +56,7 @@ class FriendControllerTest : RestDocsTest() {
 
         setupAuthentication(loginUser)
 
-        val request = NewFriendRequest(receiverCode = "d87690f5-8a73-48af-b488-6d0ebc85ff1c")
+        val request = NewFriendRequest(receiverCode = "1c2b3a4-e5f6-7890-abcd-ef1234567890")
         every { friendService.add(userId, request.toNewFriend()) } returns 10L
 
         given()
