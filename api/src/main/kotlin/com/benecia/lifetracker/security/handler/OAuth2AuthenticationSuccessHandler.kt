@@ -33,10 +33,11 @@ class OAuth2AuthenticationSuccessHandler(
 
         try {
             val user = createOrUpdateUser(oAuth2User, registrationId)
-            val accessToken = jwtUtil.generateToken(user.id!!, user.email, user.displayName, user.profileImageUrl)
-            val refreshToken = jwtUtil.generateRefreshToken(user.id)
+            val userId = user.id!!
+            val accessToken = jwtUtil.generateToken(userId, user.email, user.displayName, user.profileImageUrl)
+            val refreshToken = jwtUtil.generateRefreshToken(userId)
             refreshTokenRepository.save(
-                user.id,
+                userId,
                 refreshToken,
                 jwtUtil.getRefreshExpiration(),
             )
