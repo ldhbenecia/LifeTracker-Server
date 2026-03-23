@@ -45,5 +45,6 @@ out/
 
 ### env
 **/application.yml
+**/firebase-service-account.json
 .env
 .env.local

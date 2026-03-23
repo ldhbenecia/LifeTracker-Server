@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":storage:db-core-mongo"))
     implementation(project(":storage:db-core-redis"))
     implementation(project(":chat"))
+    implementation(project(":notification"))
 
     testImplementation(project(":tests:api-docs"))
 
