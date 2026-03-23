@@ -4,6 +4,7 @@ include(
     "api",
     "common",
     "chat",
+    "notification",
     "storage:db-core-jpa",
     "storage:db-core-mongo",
     "storage:db-core-redis",
