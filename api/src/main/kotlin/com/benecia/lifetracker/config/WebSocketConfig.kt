@@ -1,5 +1,6 @@
-package com.benecia.lifetracker.chat.config
+package com.benecia.lifetracker.config
 
+import com.benecia.lifetracker.chat.config.RabbitStompProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.ChannelRegistration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry

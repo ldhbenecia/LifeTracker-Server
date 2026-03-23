@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.chat.chatMessage.controller
+package com.benecia.lifetracker.domain.chat.api
 
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessage
 import com.benecia.lifetracker.chat.chatMessage.service.ChatMessageProducer

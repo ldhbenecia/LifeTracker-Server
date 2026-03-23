@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.chat.config
+package com.benecia.lifetracker.config
 
 import com.benecia.lifetracker.common.exception.CoreException
 import com.benecia.lifetracker.security.userdetails.LoginUser

@@ -1,4 +1,4 @@
-package com.benecia.lifetracker.chat.chatRoom.dto
+package com.benecia.lifetracker.domain.chat.dto
 
 data class DefaultRoomResponse(
     val roomId: Long,

@@ -1,6 +1,6 @@
-package com.benecia.lifetracker.chat.chatRoom.controller
+package com.benecia.lifetracker.domain.chat.api
 
-import com.benecia.lifetracker.chat.chatRoom.dto.DefaultRoomResponse
+import com.benecia.lifetracker.domain.chat.dto.DefaultRoomResponse
 import com.benecia.lifetracker.chat.chatRoom.model.ChatRoomSummary
 import com.benecia.lifetracker.chat.chatRoom.service.ChatRoomService
 import com.benecia.lifetracker.common.response.ApiResponse
